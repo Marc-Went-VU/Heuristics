@@ -43,7 +43,7 @@ public class TilingProblem
 
 			init(assignment.getWidth(), assignment.getHeight(), DELAY, assignment.getScale());
 
-			Algorithm a = new Algorithm(frame, field, assignment);
+			Algorithm a = new Algorithm(frame, field, assignment.getTiles());
 			a.runAlgorithm();//
 		}
 		catch (IOException e)

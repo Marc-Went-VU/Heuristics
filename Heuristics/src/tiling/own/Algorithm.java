@@ -2,7 +2,7 @@ package tiling.own;
 
 import tiling.Field;
 import tiling.Tile;
-import tiling.TilingAssignment;
+import tiling.TileSet;
 import tiling.TilingFrame;
 
 public class Algorithm
@@ -10,18 +10,17 @@ public class Algorithm
 	public static final int DELAY = 50;
 	private TilingFrame frame;
 	private Field field;
-	private TilingAssignment assignment;
+	private TileList tiles;
 
-	public Algorithm(TilingFrame frame, Field field, TilingAssignment assignment)
+	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
 		this.frame = frame;
 		this.field = field;
-		this.assignment = assignment;
+		this.tiles = new TileList(tiles);
 	}
 
 	public void runAlgorithm()
 	{
-		TileList tiles = new TileList(assignment.getTiles());
 		Tile tile = tiles.current();
 		int x = 0;
 		int y = 0;
