@@ -2,7 +2,6 @@ package tiling.own;
 
 import tiling.Field;
 import tiling.Tile;
-import tiling.TileSet;
 import tiling.TilingAssignment;
 import tiling.TilingFrame;
 
@@ -22,11 +21,11 @@ public class Algorithm
 
 	public void runAlgorithm()
 	{
-		TileSet tiles = assignment.getTiles();
-		Tile tile = tiles.get(0);
+		TileList tiles = new TileList(assignment.getTiles());
+		Tile tile = tiles.current();
 		int x = 0;
 		int y = 0;
-		while (tiles.size() >= 1)
+		while (tiles.hasNext())
 		{
 			System.out
 				.printf("Placing tile of size:                     %d, %d at %d, %d", tile.getWidth(), tile.getHeight(), x, y);
@@ -42,7 +41,7 @@ public class Algorithm
 			field.undo(tile, x, y);
 			frame.redraw(DELAY);
 
-			tile = tiles.get(0);
+			tile = tiles.next();
 		}//
 	}
 }
