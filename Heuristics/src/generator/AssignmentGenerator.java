@@ -35,7 +35,7 @@ public class AssignmentGenerator
 	{
 		try
 		{
-			PrintWriter writer = new PrintWriter(String.format("%d-%d-%d.tiles", tiles, settings, number), "UTF-8");
+			PrintWriter writer = new PrintWriter(String.format("tilesets/%d-%d-%d.tiles", tiles, settings, number), "UTF-8");
 
 			writer.printf("width: %d height: %d scale: %d\n", assignment.getWidth(), assignment.getHeight(), assignment.getScale());
 
