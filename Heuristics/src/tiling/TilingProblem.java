@@ -35,7 +35,7 @@ public class TilingProblem
 		TilingAssignment assignment;
 		try
 		{
-			assignment = TilingAssignment.loadFromFile("15-0-0.tiles");
+			assignment = TilingAssignment.loadFromFile("tilesets/15-0-0.tiles");
 
 			System.out.printf("Number of tiles in the set:               %d \n", assignment.getTiles().size());
 			System.out.printf("Number of differently sized tiles in set: %d \n", assignment.getTiles().getNumberOfTileSizes());
