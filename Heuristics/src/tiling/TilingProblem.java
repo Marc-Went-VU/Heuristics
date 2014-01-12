@@ -1,6 +1,7 @@
 package tiling;
 
 import java.io.IOException;
+import tiling.own.Algorithm;
 
 public class TilingProblem
 {
@@ -42,32 +43,8 @@ public class TilingProblem
 
 			init(assignment.getWidth(), assignment.getHeight(), DELAY, assignment.getScale());
 
-			Tile tile = assignment.getTiles().get(0);
-			;
-			int x = 0;
-			int y = 0;
-			while (assignment.getTiles().size() >= 1)
-			{
-				System.out.printf(
-					"Placing tile of size:                     %d, %d at %d, %d",
-					tile.getWidth(),
-					tile.getHeight(),
-					x,
-					y);
-
-				if (field.placeTile(tile, x, y))
-					System.out.println("...succes!");
-				else
-					System.out.println("...failure! :(\n");
-
-				frame.redraw(DELAY);
-
-				System.out.printf("Undoing last placed tile!\n");
-				field.undo(tile, x, y);
-				frame.redraw(DELAY);
-
-				tile = assignment.getTiles().get(0);
-			}
+			Algorithm a = new Algorithm(frame, field, assignment);
+			a.runAlgorithm();
 		}
 		catch (IOException e)
 		{
