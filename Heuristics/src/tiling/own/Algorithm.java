@@ -43,6 +43,6 @@ public class Algorithm
 			frame.redraw(DELAY);
 
 			tile = tiles.get(0);
-		}
+		}//
 	}
 }
