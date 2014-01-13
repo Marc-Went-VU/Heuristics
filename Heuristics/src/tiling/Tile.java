@@ -51,10 +51,10 @@ public class Tile implements Comparable<Tile>
 		return this.color;
 	}
 
-	@Override
+	//@Override
 	// This equals is used in TileSet to count the number of
 	// different sized tiles
-	public boolean equals(Object obj)
+	public boolean equals(Tile obj)
 	{
 		if (obj instanceof Tile)
 		{

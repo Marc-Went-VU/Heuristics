@@ -1,6 +1,5 @@
 package tiling.own;
 
-import java.util.Collections;
 import tiling.Field;
 import tiling.Tile;
 import tiling.TileSet;
@@ -12,20 +11,21 @@ public class Algorithm
 	public static final int DELAY = 50;
 	private TilingFrame frame;
 	private Field field;
-	private TileMap map;
+	private TileList list;
 	private History history;
 
 	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
 		this.frame = frame;
 		this.field = field;
-		this.map = new TileMap(tiles, Collections.reverseOrder());
+		this.list = new TileList(tiles);
 		this.history = new History();
 	}
 
 	public void runAlgorithm()
 	{
-		Tile tile = map.getFirst();
+		Tile tile = list.getFirst();
+		int whileCounter = 0;
 		for (int i = 0; i < field.getHeight(); i++)
 		{
 			for (int j = 0; j < field.getWidth(); j++)
@@ -34,21 +34,25 @@ public class Algorithm
 					continue;
 				while (tile != null && !(field.placeTileSecure(tile, j, i) || field.placeTileSecure(tile.rotate(), j, i)))
 				{
-					tile = map.getBySize(field.getWidth() - j);
+					tile = list.getByWidth(field.getWidth() - j);
+					if (tile == null || whileCounter++ >= 5)
+						tile = list.getByHeight(field.getHeight() - i);
 				}
+				whileCounter = 0;
 				if (tile == null)
 				{
 					HistoryValue hv = history.undo();
 					field.undo(hv.getTile(), hv.getX(), hv.getY());
-					tile = map.getBiggest();
-					map.setUnUsed(hv.getTile());
+					tile = list.getBiggest();
+					list.setUnUsed(hv.getTile());
 				}
 				else
 				{
-					map.setUsed(tile);
+					list.setUsed(tile);
 					history.add(tile, j, i);
-					tile = map.getBiggest();
+					tile = list.getBiggest();
 				}
+				list.printFree();
 				frame.redraw(DELAY);
 
 			}
