@@ -43,4 +43,15 @@ public class TileList
 		return tileSet.peek(pos);
 	}
 
+	public Tile first()
+	{
+		pos = 0;
+		return tileSet.peek(pos);
+	}
+
+	public boolean remove(Tile t)
+	{
+		return tileSet.remove(t);
+	}
+
 }
