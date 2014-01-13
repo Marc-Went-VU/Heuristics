@@ -1,4 +1,4 @@
-package tiling.own;
+package tiling.own.history;
 
 import java.util.ArrayList;
 import tiling.Tile;
@@ -19,40 +19,28 @@ public class History
 		HistoryValue hv = new HistoryValue(t, x, y);
 		if (list.add(hv))
 			last++;
+	}
 
+	public void add(HistoryValue hv)
+	{
+		if (list.add(hv))
+			last++;
 	}
 
 	public HistoryValue undo()
 	{
+
 		return list.remove(--last);
 	}
 
-	public class HistoryValue
+	public boolean contains(HistoryValue hv)
 	{
-		private Tile t;
-		private int x;
-		private int y;
-
-		public HistoryValue(Tile t, int x, int y)
+		for (int i = list.size() - 1; i >= 0; i--)
 		{
-			this.t = t;
-			this.x = x;
-			this.y = y;
+			if (list.get(i).equals(hv))
+				return true;
 		}
-
-		public Tile getTile()
-		{
-			return this.t;
-		}
-
-		public int getX()
-		{
-			return this.x;
-		}
-
-		public int getY()
-		{
-			return this.y;
-		}
+		return false;
+		//				return list.contains(hv);
 	}
 }

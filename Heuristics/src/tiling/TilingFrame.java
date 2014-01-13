@@ -63,7 +63,7 @@ public class TilingFrame extends JFrame
 		validate();
 		try
 		{
-			Thread.sleep(200);
+			Thread.sleep(delay);
 		}
 		catch (InterruptedException e)
 		{

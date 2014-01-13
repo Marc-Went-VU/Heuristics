@@ -1,4 +1,4 @@
-package tiling.own;
+package tiling.tmp;
 
 public class Test
 {

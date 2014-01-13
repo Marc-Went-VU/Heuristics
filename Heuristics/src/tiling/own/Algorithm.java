@@ -4,15 +4,18 @@ import tiling.Field;
 import tiling.Tile;
 import tiling.TileSet;
 import tiling.TilingFrame;
-import tiling.own.History.HistoryValue;
+import tiling.own.history.History;
+import tiling.own.history.HistoryValue;
 
 public class Algorithm
 {
-	public static final int DELAY = 50;
+	public static final int DELAY = 100;
+	public static final boolean DEBUG = false;
 	private TilingFrame frame;
 	private Field field;
 	private TileList list;
 	private History history;
+	private History undoneHistory;
 
 	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
@@ -20,6 +23,7 @@ public class Algorithm
 		this.field = field;
 		this.list = new TileList(tiles);
 		this.history = new History();
+		this.undoneHistory = new History();
 	}
 
 	public void runAlgorithm()
@@ -47,18 +51,26 @@ public class Algorithm
 				if (tile == null)
 				{
 					HistoryValue hv = history.undo();
-					field.undo(hv.getTile(), hv.getX(), hv.getY());
 					tile = list.getBiggest();
-					list.setUnUsed(hv.getTile());
+					undoLastMove(hv);
 					i = hv.getY();
 					j = hv.getX() - 1;
 				}
 				else
 				{
-					System.out.printf("(%d,%d) %s\n", j, i, tile.excessiveString());
-					list.setUsed(tile);
-					history.add(tile, j, i);
-					tile = list.getBiggest();
+					if (DEBUG)
+						System.out.printf("(%d,%d) %s\n", j, i, tile.excessiveString());
+					HistoryValue hv = new HistoryValue(tile, j, i);
+					if (undoneHistory.contains(hv))
+					{
+						field.undo(hv.getTile(), hv.getX(), hv.getY());
+					}
+					else
+					{
+						list.setUsed(tile);
+						history.add(tile, j, i);
+						tile = list.getBiggest();
+					}
 				}
 				frame.redraw(DELAY);
 
@@ -68,8 +80,18 @@ public class Algorithm
 				break;
 		}
 
-		System.out.println("Stopped");
-		System.out.println(list.toString());
-		list.printFree();
+		if (DEBUG)
+			System.out.println("Stopped");
+		if (DEBUG)
+			System.out.println(list.toString());
+		if (DEBUG)
+			list.printFree();
+	}
+
+	private void undoLastMove(HistoryValue hv)
+	{
+		undoneHistory.add(hv);
+		field.undo(hv.getTile(), hv.getX(), hv.getY());
+		list.setUnUsed(hv.getTile());
 	}
 }

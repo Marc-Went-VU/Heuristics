@@ -80,11 +80,11 @@ public class TileList
 				continue;
 			t = item.getTile();
 			if (t.getWidth() == w)
-				items.add(item);
+				tryAdd(items, item);
 			else if (t.getHeight() == w)
 			{
 				t.rotate();
-				items.add(item);
+				tryAdd(items, item);
 			}
 
 		}
@@ -92,6 +92,22 @@ public class TileList
 			return null;
 		item = items.get(new Random().nextInt(items.size()));
 		return item.getTile();
+	}
+
+	private void tryAdd(ArrayList<TileItem> itemList, TileItem tI)
+	{
+		Tile t1;
+		Tile t2 = tI.getTile();
+		for (TileItem item : itemList)
+		{
+			t1 = item.getTile();
+			if ((t1.getWidth() == t2.getWidth() && t1.getHeight() == t2.getHeight())
+				|| (t1.getHeight() == t2.getWidth() && t1.getWidth() == t2.getHeight()))
+			{
+				return;
+			}
+		}
+		itemList.add(tI);
 	}
 
 	public Tile getByHeight(int h)
