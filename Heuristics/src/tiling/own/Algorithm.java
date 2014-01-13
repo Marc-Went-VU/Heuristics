@@ -34,9 +34,14 @@ public class Algorithm
 					continue;
 				while (tile != null && !(field.placeTileSecure(tile, j, i) || field.placeTileSecure(tile.rotate(), j, i)))
 				{
+					if (whileCounter > 10)
+						break;
 					tile = list.getByWidth(field.getWidth() - j);
-					if (tile == null || whileCounter++ >= 5)
+					if (tile == null || whileCounter >= 5)
+					{
 						tile = list.getByHeight(field.getHeight() - i);
+					}
+					whileCounter++;
 				}
 				whileCounter = 0;
 				if (tile == null)
@@ -45,19 +50,26 @@ public class Algorithm
 					field.undo(hv.getTile(), hv.getX(), hv.getY());
 					tile = list.getBiggest();
 					list.setUnUsed(hv.getTile());
+					i = hv.getY();
+					j = hv.getX() - 1;
 				}
 				else
 				{
+					System.out.printf("(%d,%d) %s\n", j, i, tile.excessiveString());
 					list.setUsed(tile);
 					history.add(tile, j, i);
 					tile = list.getBiggest();
 				}
-				list.printFree();
 				frame.redraw(DELAY);
 
 			}
+			whileCounter = 0;
 			if (tile == null)
 				break;
 		}
+
+		System.out.println("Stopped");
+		System.out.println(list.toString());
+		list.printFree();
 	}
 }

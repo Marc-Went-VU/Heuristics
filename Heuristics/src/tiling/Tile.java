@@ -79,6 +79,11 @@ public class Tile implements Comparable<Tile>
 		return this.getWidth() + "x" + this.getHeight() + "=" + (this.getWidth() * this.getHeight());
 	}
 
+	public String excessiveString()
+	{
+		return this.toString() + " - " + color.toString();
+	}
+
 	public Tile rotate()
 	{
 		int tmpX = this.getWidth();

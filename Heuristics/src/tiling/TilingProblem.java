@@ -12,6 +12,8 @@ public class TilingProblem
 	// Delay in milliseconds, slows down the program so you can see the steps
 	public static final int DELAY = 50;
 
+	public static final String PROBLEM = "15-0-4";
+
 	TilingProblem()
 	{
 	}
@@ -36,7 +38,7 @@ public class TilingProblem
 		TilingAssignment assignment;
 		try
 		{
-			assignment = TilingAssignment.loadFromFile("tilesets/15-0-0.tiles");
+			assignment = TilingAssignment.loadFromFile("tilesets/" + PROBLEM + ".tiles");
 
 			System.out.printf("Number of tiles in the set:               %d \n", assignment.getTiles().size());
 			System.out.printf("Number of differently sized tiles in set: %d \n", assignment.getTiles().getNumberOfTileSizes());
