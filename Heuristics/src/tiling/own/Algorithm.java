@@ -67,10 +67,6 @@ public class Algorithm
 	{
 		int maxWidth = 0;
 		Tile tile = null;
-		if (j == 5 && i == 18)
-		{
-			list.printFree();
-		}
 		for (int k = j; k < field.getWidth(); k++)
 		{
 			if (field.isOccupied(k, i))
