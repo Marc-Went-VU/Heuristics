@@ -38,71 +38,12 @@ public class Algorithm
 			{
 				if (field.isOccupied(j, i))
 					continue;
-				int maxWidth = 0;
-				if (j == 5 && i == 18)
-				{
-					list.printFree();
-				}
-				for (int k = j; k < field.getWidth(); k++)
-				{
-					if (field.isOccupied(k, i))
-						break;
-					maxWidth++;
-				}
-				TileList items = null;
-				while ((items = list.getListByWidth(maxWidth)) == null && maxWidth > 0)
-				{
-					maxWidth--;
-				}
-				if (items == null)
-				{
-					tile = null;
-					break;
-				}
-				int maxHeight = 0;
-				for (int k = i; k < field.getHeight(); k++)
-				{
-					if (field.isOccupied(j, k))
-						break;
-					maxHeight++;
-				}
-
-				while ((tile = items.getSecureByHeight(maxHeight)) == null && maxHeight > 0)
-				{
-					maxHeight--;
-				}
-				if (tile == null)
-				{
-					maxHeight = 0;
-					for (int k = i; k < field.getHeight(); k++)
-					{
-						if (field.isOccupied(j, k))
-							break;
-						maxHeight++;
-					}
-					items = null;
-					while ((items = list.getListByHeight(maxHeight)) == null && maxHeight > 0)
-					{
-						maxHeight--;
-					}
-					if (items == null)
-					{
-						tile = null;
-						break;
-					}
-					maxWidth = 0;
-					for (int k = j; k < field.getWidth(); k++)
-					{
-						if (field.isOccupied(k, i))
-							break;
-						maxWidth++;
-					}
-					tile = null;
-					while ((tile = items.getSecureByWidth(maxWidth)) == null && maxWidth > 0)
-					{
-						maxWidth--;
-					}
-				}
+				tile = getBiggestByWidth(i, j);
+				Tile tile2 = getBiggestByHeight(i, j);
+				if (tile == null && tile2 != null)
+					tile = tile2;
+				if (tile != null && tile2 != null)
+					tile = tile.getArea() < tile2.getArea() ? tile2 : tile;
 				if (tile == null)
 					break;
 				if ((field.placeTileSecure(tile, j, i) || field.placeTileSecure(tile.rotate(), j, i)))
@@ -120,6 +61,78 @@ public class Algorithm
 		if (DEBUG)
 			System.out.println(list.toString());
 
+	}
+
+	private Tile getBiggestByWidth(int i, int j)
+	{
+		int maxWidth = 0;
+		Tile tile = null;
+		if (j == 5 && i == 18)
+		{
+			list.printFree();
+		}
+		for (int k = j; k < field.getWidth(); k++)
+		{
+			if (field.isOccupied(k, i))
+				break;
+			maxWidth++;
+		}
+		TileList items = null;
+		while ((items = list.getListByWidth(maxWidth)) == null && maxWidth > 0)
+		{
+			maxWidth--;
+		}
+		if (items == null)
+		{
+			return null;
+		}
+		int maxHeight = 0;
+		for (int k = i; k < field.getHeight(); k++)
+		{
+			if (field.isOccupied(j, k))
+				break;
+			maxHeight++;
+		}
+
+		while ((tile = items.getSecureByHeight(maxHeight)) == null && maxHeight > 0)
+		{
+			maxHeight--;
+		}
+		return tile;
+	}
+
+	private Tile getBiggestByHeight(int i, int j)
+	{
+		int maxHeight = 0;
+		Tile tile = null;
+		for (int k = i; k < field.getHeight(); k++)
+		{
+			if (field.isOccupied(j, k))
+				break;
+			maxHeight++;
+		}
+		TileList items = null;
+		while ((items = list.getListByHeight(maxHeight)) == null && maxHeight > 0)
+		{
+			maxHeight--;
+		}
+		if (items == null)
+		{
+			return null;
+		}
+		int maxWidth = 0;
+		for (int k = j; k < field.getWidth(); k++)
+		{
+			if (field.isOccupied(k, i))
+				break;
+			maxWidth++;
+		}
+		tile = null;
+		while ((tile = items.getSecureByWidth(maxWidth)) == null && maxWidth > 0)
+		{
+			maxWidth--;
+		}
+		return tile;
 	}
 
 	private void undoLastMove(HistoryValue hv)
