@@ -24,6 +24,13 @@ public class TileList
 		pos = 0;
 	}
 
+	private TileList(ArrayList<TileItem> list)
+	{
+		this.list = list;
+		Collections.sort(list, Collections.reverseOrder());
+		pos = 0;
+	}
+
 	public boolean hasNext()
 	{
 		return pos < list.size();
@@ -70,6 +77,14 @@ public class TileList
 
 	public Tile getByWidth(int w)
 	{
+		TileList items = getListByWidth(w);
+		if (items == null)
+			return null;
+		return items.get(new Random().nextInt(items.size())).getTile();
+	}
+
+	public TileList getListByWidth(int w)
+	{
 		ArrayList<TileItem> items = new ArrayList<TileItem>();
 		TileItem item = null;
 		Tile t;
@@ -90,28 +105,13 @@ public class TileList
 		}
 		if (items.size() == 0)
 			return null;
-		item = items.get(new Random().nextInt(items.size()));
-		return item.getTile();
+		return new TileList(items);
+
 	}
 
-	private void tryAdd(ArrayList<TileItem> itemList, TileItem tI)
+	public TileList getListByHeight(int h)
 	{
-		Tile t1;
-		Tile t2 = tI.getTile();
-		for (TileItem item : itemList)
-		{
-			t1 = item.getTile();
-			if ((t1.getWidth() == t2.getWidth() && t1.getHeight() == t2.getHeight())
-				|| (t1.getHeight() == t2.getWidth() && t1.getWidth() == t2.getHeight()))
-			{
-				return;
-			}
-		}
-		itemList.add(tI);
-	}
-
-	public Tile getByHeight(int h)
-	{
+		ArrayList<TileItem> items = new ArrayList<TileItem>();
 		TileItem item = null;
 		Tile t;
 		for (int i = 0; i < list.size(); i++)
@@ -121,8 +121,56 @@ public class TileList
 				continue;
 			t = item.getTile();
 			if (t.getWidth() == h)
-				return t.rotate();
+			{
+				t.rotate();
+				tryAdd(items, item);
+			}
 			else if (t.getHeight() == h)
+			{
+				tryAdd(items, item);
+			}
+
+		}
+		if (items.size() == 0)
+			return null;
+		return new TileList(items);
+	}
+
+	public Tile getByHeight(int h)
+	{
+		TileList items = getListByHeight(h);
+		if (items == null)
+			return null;
+		return items.get(new Random().nextInt(items.size())).getTile();
+	}
+
+	public Tile getSecureByWidth(int w)
+	{
+		TileItem item = null;
+		Tile t;
+		for (int i = 0; i < list.size(); i++)
+		{
+			item = list.get(i);
+			if (!item.freeToUse())
+				continue;
+			t = item.getTile();
+			if (t.getWidth() == w)
+				return t;
+		}
+		return null;
+	}
+
+	public Tile getSecureByHeight(int h)
+	{
+		TileItem item = null;
+		Tile t;
+		for (int i = 0; i < list.size(); i++)
+		{
+			item = list.get(i);
+			if (!item.freeToUse())
+				continue;
+			t = item.getTile();
+			if (t.getHeight() == h)
 				return t;
 		}
 		return null;
@@ -150,18 +198,6 @@ public class TileList
 	{
 		TileItem ti = findTileItem(t);
 		ti.setUnUsed();
-	}
-
-	private TileItem findTileItem(Tile t)
-	{
-		TileItem item = null;
-		for (int i = 0; i < list.size(); i++)
-		{
-			item = list.get(i);
-			if (item.getTile().equals((Object)t))
-				return item;
-		}
-		return null;
 	}
 
 	public void printFree()
@@ -194,6 +230,46 @@ public class TileList
 	public String toString()
 	{
 		return list.toString();
+	}
+
+	private int size()
+	{
+		return this.list.size();
+	}
+
+	private TileItem get(int i)
+	{
+		if (i < 0 || i > this.list.size())
+			return null;
+		return this.list.get(i);
+	}
+
+	private TileItem findTileItem(Tile t)
+	{
+		TileItem item = null;
+		for (int i = 0; i < list.size(); i++)
+		{
+			item = list.get(i);
+			if (item.getTile().equals((Object)t))
+				return item;
+		}
+		return null;
+	}
+
+	private void tryAdd(ArrayList<TileItem> itemList, TileItem tI)
+	{
+		Tile t1;
+		Tile t2 = tI.getTile();
+		for (TileItem item : itemList)
+		{
+			t1 = item.getTile();
+			if ((t1.getWidth() == t2.getWidth() && t1.getHeight() == t2.getHeight())
+				|| (t1.getHeight() == t2.getWidth() && t1.getWidth() == t2.getHeight()))
+			{
+				return;
+			}
+		}
+		itemList.add(tI);
 	}
 
 	public class TileItem implements Comparable<TileItem>
@@ -239,4 +315,5 @@ public class TileList
 			return t.toString() + "=" + b;
 		}
 	}
+
 }

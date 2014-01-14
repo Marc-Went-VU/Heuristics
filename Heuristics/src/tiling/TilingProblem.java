@@ -76,6 +76,7 @@ public class TilingProblem
 
 			Algorithm a = new Algorithm(frame, field, assignment.getTiles());
 			a.runAlgorithm();//
+			System.out.printf("%d-%d-%d finished succesfully", tile, x, y);
 		}
 		catch (IOException e)
 		{
@@ -88,22 +89,29 @@ public class TilingProblem
 		boolean multiple = false;
 		if (multiple)
 		{
+			int counter = 0;
 			for (final Int t = new Int(15); t.getI() <= 24; t.add(10))
 			{
-				for (final Int x = new Int(0); x.getI() <= 0; x.add(1))
+				for (final Int x = new Int(0); x.getI() <= 4; x.add(1))
 				{
-					for (final Int y = new Int(0); y.getI() <= 0; y.add(1))
+					for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
 					{
 						System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
+						if (counter >= Runtime.getRuntime().availableProcessors() - 2)
+							break;
+						final int ti = t.getI();
+						final int xi = x.getI();
+						final int yi = y.getI();
 						new Thread(new Runnable()
 						{
 
 							@Override
 							public void run()
 							{
-								new TilingProblem().start(t.getI(), x.getI(), y.getI());
+								new TilingProblem().start(ti, xi, yi);
 							}
 						}).start();
+						counter++;
 
 					}
 				}
@@ -113,7 +121,7 @@ public class TilingProblem
 		{
 			int t = 15;
 			int x = 0;
-			int y = 4;
+			int y = 0;
 			new TilingProblem().start(t, x, y);
 		}
 	}
