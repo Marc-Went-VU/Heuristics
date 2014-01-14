@@ -85,26 +85,36 @@ public class TilingProblem
 
 	public static void main(String[] args)
 	{
-		for (final Int t = new Int(15); t.getI() <= 24; t.add(10))
+		boolean multiple = false;
+		if (multiple)
 		{
-			for (final Int x = new Int(0); x.getI() <= 0; x.add(1))
+			for (final Int t = new Int(15); t.getI() <= 24; t.add(10))
 			{
-				for (final Int y = new Int(0); y.getI() <= 0; y.add(1))
+				for (final Int x = new Int(0); x.getI() <= 0; x.add(1))
 				{
-					System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
-					new Thread(new Runnable()
+					for (final Int y = new Int(0); y.getI() <= 0; y.add(1))
 					{
-
-						@Override
-						public void run()
+						System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
+						new Thread(new Runnable()
 						{
-							new TilingProblem().start(t.getI(), x.getI(), y.getI());
-						}
-					}).start();
 
+							@Override
+							public void run()
+							{
+								new TilingProblem().start(t.getI(), x.getI(), y.getI());
+							}
+						}).start();
+
+					}
 				}
 			}
 		}
-		//new TilingProblem().start(15, 0, 0);
+		else
+		{
+			int t = 15;
+			int x = 0;
+			int y = 4;
+			new TilingProblem().start(t, x, y);
+		}
 	}
 }

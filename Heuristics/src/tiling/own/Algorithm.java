@@ -52,14 +52,17 @@ public class Algorithm
 				{
 					HistoryValue hv = history.undo();
 					tile = list.getBiggest();
-					undoLastMove(hv);
-					i = hv.getY();
-					j = hv.getX() - 1;
+					if (hv != null)
+					{
+						undoLastMove(hv);
+						i = hv.getY();
+						j = hv.getX() - 1;
+					}
 				}
 				else
 				{
-					if (DEBUG)
-						System.out.printf("(%d,%d) %s\n", j, i, tile.excessiveString());
+					//					if (DEBUG)
+					//						System.out.printf("(%d,%d) %s\n", j, i, tile.excessiveString());
 					HistoryValue hv = new HistoryValue(tile, j, i);
 					if (undoneHistory.contains(hv))
 					{
@@ -67,6 +70,7 @@ public class Algorithm
 					}
 					else
 					{
+						//j += tile.getWidth() - 1;
 						list.setUsed(tile);
 						history.add(tile, j, i);
 						tile = list.getBiggest();
@@ -78,14 +82,15 @@ public class Algorithm
 			whileCounter = 0;
 			if (tile == null)
 				break;
+			//			if (DEBUG)
+			list.printFree();
 		}
 
-		if (DEBUG)
-			System.out.println("Stopped");
+		//		if (DEBUG)
+		System.out.println("Stopped");
 		if (DEBUG)
 			System.out.println(list.toString());
-		if (DEBUG)
-			list.printFree();
+
 	}
 
 	private void undoLastMove(HistoryValue hv)

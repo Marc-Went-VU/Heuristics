@@ -29,8 +29,10 @@ public class History
 
 	public HistoryValue undo()
 	{
-
-		return list.remove(--last);
+		if (last > 0)
+			return list.remove(--last);
+		else
+			return null;
 	}
 
 	public boolean contains(HistoryValue hv)
