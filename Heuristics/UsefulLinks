@@ -4,3 +4,10 @@ http://www.maa.org/sites/default/files/images/upload_library/22/Ford/Wagon601-61
 
 https://stackoverflow.com/questions/11724066/tiling-different-size-rectangles
 http://www.blackpawn.com/texts/lightmaps/default.html
+http://qiao.github.io/PathFinding.js/visual/
+
+
+
+
+A* implementeren
+Met scores werken: Score = totaalVrijeOppervalakte( totaleOpeervlakete - geplaatsteOppervlakte)
