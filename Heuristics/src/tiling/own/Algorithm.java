@@ -9,7 +9,7 @@ import tiling.own.history.HistoryValue;
 
 public class Algorithm
 {
-	public static final int DELAY = 100;
+	public static final int DELAY = 200;
 	public static final boolean DEBUG = false;
 	private TilingFrame frame;
 	private Field field;
