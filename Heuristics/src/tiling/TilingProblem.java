@@ -76,7 +76,7 @@ public class TilingProblem
 
 			Algorithm a = new Algorithm(frame, field, assignment.getTiles());
 			a.runAlgorithm();//
-			System.out.printf("%d-%d-%d finished succesfully", tile, x, y);
+			System.out.printf("%d-%d-%d finished succesfully\n", tile, x, y);
 		}
 		catch (IOException e)
 		{
@@ -121,7 +121,7 @@ public class TilingProblem
 		{
 			int t = 15;
 			int x = 0;
-			int y = 4;
+			int y = 0;
 			new TilingProblem().start(t, x, y);
 		}
 	}

@@ -38,8 +38,8 @@ public class Algorithm
 			{
 				if (field.isOccupied(j, i))
 					continue;
-				tile = getBiggestByWidth(i, j);
 				Tile tile2 = getBiggestByHeight(i, j);
+				tile = getBiggestByWidth(i, j);
 				if (tile == null && tile2 != null)
 					tile = tile2;
 				if (tile != null && tile2 != null)
@@ -52,12 +52,13 @@ public class Algorithm
 					history.add(tile, j, i);
 				}
 				frame.redraw(DELAY);
-				list.printFree();
+				//list.printFree();
 			}
 			if (tile == null)
 				break;
 		}
-		System.out.println("Stopped");
+		//		System.out.println("Stopped");
+		list.printFree();
 		if (DEBUG)
 			System.out.println(list.toString());
 
