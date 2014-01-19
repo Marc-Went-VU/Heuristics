@@ -5,7 +5,6 @@ import tiling.Tile;
 import tiling.TileSet;
 import tiling.TilingFrame;
 import tiling.own.history.History;
-import tiling.own.history.HistoryValue;
 
 public class Algorithm
 {
@@ -15,7 +14,8 @@ public class Algorithm
 	private Field field;
 	private TileList list;
 	private History history;
-	private History undoneHistory;
+
+	//	private History undoneHistory;
 
 	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
@@ -23,7 +23,7 @@ public class Algorithm
 		this.field = field;
 		this.list = new TileList(tiles);
 		this.history = new History();
-		this.undoneHistory = new History();
+		//		this.undoneHistory = new History();
 	}
 
 	public void runAlgorithm()
@@ -31,7 +31,6 @@ public class Algorithm
 		//System.out.println(list.toString());
 		//Tile tile = list.getFirst();
 		Tile tile = null;
-		int whileCounter = 0;
 		for (int i = 0; i < field.getHeight(); i++)
 		{
 			for (int j = 0; j < field.getWidth(); j++)
@@ -132,10 +131,10 @@ public class Algorithm
 		return tile;
 	}
 
-	private void undoLastMove(HistoryValue hv)
-	{
-		undoneHistory.add(hv);
-		field.undo(hv.getTile(), hv.getX(), hv.getY());
-		list.setUnUsed(hv.getTile());
-	}
+	//	private void undoLastMove(HistoryValue hv)
+	//	{
+	//		undoneHistory.add(hv);
+	//		field.undo(hv.getTile(), hv.getX(), hv.getY());
+	//		list.setUnUsed(hv.getTile());
+	//	}
 }
