@@ -6,6 +6,11 @@ https://stackoverflow.com/questions/11724066/tiling-different-size-rectangles
 http://www.blackpawn.com/texts/lightmaps/default.html
 http://qiao.github.io/PathFinding.js/visual/
 
+*Technieken voor het vullen van een veld*
+http://www.codeproject.com/Articles/210979/Fast-optimizing-rectangle-packing-algorithm-for-bu
+http://codeincomplete.com/posts/2011/5/7/bin_packing/
+https://github.com/juj/RectangleBinPack
+http://clb.demon.fi/files/RectangleBinPack.pdf
 
 
 
