@@ -154,18 +154,4 @@ public class Field
 	{
 		return !field[x][y].isEmpty();
 	}
-
-	public int getFreeArea()
-	{
-		int area = 0;
-		for (int i = 0; i < field.length; i++)
-		{
-			for (int j = 0; j < field[i].length; j++)
-			{
-				if (!this.isOccupied(i, j))
-					area++;
-			}
-		}
-		return area;
-	}
 }

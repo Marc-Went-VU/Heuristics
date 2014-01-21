@@ -87,12 +87,19 @@ public class TileList
 		return false;
 	}
 
-	public Tile getByWidth(int w)
+	public Tile getByWidth(int w, SORT s)
 	{
 		TileList items = getListByWidth(w);
 		if (items == null)
 			return null;
-		return items.get(new Random().nextInt(items.size())).getTile();
+		switch (s)
+		{
+		case AREA:
+			return items.get(0).getTile();
+		case RANDOM:
+		default:
+			return items.get(new Random().nextInt(items.size())).getTile();
+		}
 	}
 
 	public TileList getListByWidth(int w)
@@ -148,12 +155,19 @@ public class TileList
 		return new TileList(items);
 	}
 
-	public Tile getByHeight(int h)
+	public Tile getByHeight(int h, SORT s)
 	{
 		TileList items = getListByHeight(h);
 		if (items == null)
 			return null;
-		return items.get(new Random().nextInt(items.size())).getTile();
+		switch (s)
+		{
+		case AREA:
+			return items.get(0).getTile();
+		case RANDOM:
+		default:
+			return items.get(new Random().nextInt(items.size())).getTile();
+		}
 	}
 
 	public Tile getSecureByWidth(int w)
@@ -282,6 +296,12 @@ public class TileList
 			}
 		}
 		itemList.add(tI);
+	}
+
+	public enum SORT
+	{
+		AREA,
+		RANDOM
 	}
 
 	public class TileItem implements Comparable<TileItem>

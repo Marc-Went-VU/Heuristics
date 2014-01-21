@@ -1,11 +1,10 @@
 package tiling.own;
 
-import java.util.ArrayList;
-import java.util.PriorityQueue;
 import tiling.Field;
 import tiling.Tile;
 import tiling.TileSet;
 import tiling.TilingFrame;
+import tiling.own.TileList.SORT;
 import tiling.own.history.History;
 
 public class Algorithm
@@ -34,46 +33,73 @@ public class Algorithm
 
 	public void runAlgorithm()
 	{
-		PriorityQueue<Tile> openSet = new PriorityQueue<Tile>();
-		openSet.add(list.getFirstAvailable());
-		ArrayList<Tile> closedSet = new ArrayList<Tile>();
-		this.numSearchSteps = 0;
-		while (openSet.size() > 0 && (maxSteps < 0 || this.numSearchSteps < maxSteps))
-		{
-			Tile t = openSet.poll();
-			/*
-			 * if(goalNode.inGoal(t)
-			 * return t;
-			 */
-			ArrayList<Tile> successors = list.getAvailableTiles();
-			for (Tile successor : successors)
-			{
-				boolean inOpenSet;
-				if (closedSet.contains(successor))
-					continue;
-				Tile discSuccessorNode = getNode(openSet, successor);
-				if (discSuccessorNode != null)
-					inOpenSet = true;
-				else
-					inOpenSet = false;
-
-				int tentativeG = field.getFreeArea() + successor.getArea();
-
-				if (inOpenSet && tentativeG >= field.getFreeArea())
-					continue;
-			}
-		}
+		algo(0, 0, DIR.HEIGHT);
+		list.printFree();
 	}
 
-	private Tile getNode(PriorityQueue<Tile> queue, Tile searchedNode)
+	private void algo(int x, int y, DIR d)
 	{
-		for (Tile openSearchNode : queue)
+
+		int maxWidth = getBiggest(x, y, d);
+		Tile t = getBiggestTile(maxWidth, d);
+		if (t == null)
+			return;
+		if (field.placeTileSecure(t, x, y))
 		{
-			if (openSearchNode.equals(searchedNode))
+			list.setUsed(t);
+			frame.redraw(DELAY);
+		}
+
+		algo(x, y + t.getHeight(), d);
+		algo(x + t.getWidth(), y, d);
+	}
+
+	private Tile getBiggestTile(int maxSize, DIR d)
+	{
+		Tile t = null;
+		if (d == DIR.WIDTH)
+		{
+			while (maxSize > 0 && (t = list.getByWidth(maxSize, SORT.AREA)) == null)
 			{
-				return openSearchNode;
+				maxSize--;
 			}
 		}
-		return null;
+		else
+		{
+			while (maxSize > 0 && (t = list.getByHeight(maxSize, SORT.AREA)) == null)
+			{
+				maxSize--;
+			}
+		}
+		return t;
+	}
+
+	private int getBiggest(int x, int y, DIR d)
+	{
+		int size = 0;
+
+		while (x < field.getWidth() && y < field.getHeight() && !field.isOccupied(x, y))
+		{
+			size++;
+			if (d == DIR.WIDTH)
+			{
+				x++;
+				if (x >= field.getWidth())
+					return size;
+			}
+			else
+			{
+				y++;
+				if (y >= field.getHeight())
+					return size;
+			}
+		}
+		return size;
+	}
+
+	public enum DIR
+	{
+		WIDTH,
+		HEIGHT
 	}
 }
