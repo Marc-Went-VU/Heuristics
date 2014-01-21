@@ -28,113 +28,57 @@ public class Algorithm
 
 	public void runAlgorithm()
 	{
-		//System.out.println(list.toString());
-		//Tile tile = list.getFirst();
-		Tile tile = null;
-		for (int i = 0; i < field.getHeight(); i++)
+		Coord c = new Coord(0, 0);
+		algo(field, c, c);
+	}
+
+	private void algo(Field f, Coord c, Coord c2)
+	{
+		Tile tile1 = list.getFirstAvailable();
+		if (f.placeTileSecure(tile1, c.getX(), c.getY()))
 		{
-			for (int j = 0; j < field.getWidth(); j++)
-			{
-				if (field.isOccupied(j, i))
-					continue;
-				Tile tile2 = getBiggestByHeight(i, j);
-				tile = getBiggestByWidth(i, j);
-				if (tile == null && tile2 != null)
-					tile = tile2;
-				if (tile != null && tile2 != null)
-					tile = tile.getArea() < tile2.getArea() ? tile2 : tile;
-				if (tile == null)
-					break;
-				if ((field.placeTileSecure(tile, j, i) || field.placeTileSecure(tile.rotate(), j, i)))
-				{
-					list.setUsed(tile);
-					history.add(tile, j, i);
-				}
-				frame.redraw(DELAY);
-				//list.printFree();
-			}
-			if (tile == null)
-				break;
+			list.setUsed(tile1);
+			algo(f, new Coord(c.getX() + tile1.getWidth(), c.getY()), new Coord(c.getX(), c.getY() + tile1.getHeight()));
 		}
-		//		System.out.println("Stopped");
+		tile1 = list.getFirstAvailable();
+		if (c2 != null && f.placeTileSecure(tile1, c2.getX(), c2.getY()))
+		{
+			list.setUsed(tile1);
+			algo(f, new Coord(c2.getX() + tile1.getWidth(), c2.getY()), new Coord(c2.getX(), c2.getY() + tile1.getHeight()));
+		}
 		list.printFree();
-		if (DEBUG)
-			System.out.println(list.toString());
-
 	}
 
-	private Tile getBiggestByWidth(int i, int j)
+	private class Coord
 	{
-		int maxWidth = 0;
-		Tile tile = null;
-		for (int k = j; k < field.getWidth(); k++)
+		private int y;
+		private int x;
+
+		Coord(int x, int y)
 		{
-			if (field.isOccupied(k, i))
-				break;
-			maxWidth++;
-		}
-		TileList items = null;
-		while ((items = list.getListByWidth(maxWidth)) == null && maxWidth > 0)
-		{
-			maxWidth--;
-		}
-		if (items == null)
-		{
-			return null;
-		}
-		int maxHeight = 0;
-		for (int k = i; k < field.getHeight(); k++)
-		{
-			if (field.isOccupied(j, k))
-				break;
-			maxHeight++;
+			this.setX(x);
+			this.setY(y);
 		}
 
-		while ((tile = items.getSecureByHeight(maxHeight)) == null && maxHeight > 0)
+		public int getX()
 		{
-			maxHeight--;
+			return x;
 		}
-		return tile;
+
+		public void setX(int x)
+		{
+			this.x = x;
+		}
+
+		public int getY()
+		{
+			return y;
+		}
+
+		public void setY(int y)
+		{
+			this.y = y;
+		}
+
 	}
-
-	private Tile getBiggestByHeight(int i, int j)
-	{
-		int maxHeight = 0;
-		Tile tile = null;
-		for (int k = i; k < field.getHeight(); k++)
-		{
-			if (field.isOccupied(j, k))
-				break;
-			maxHeight++;
-		}
-		TileList items = null;
-		while ((items = list.getListByHeight(maxHeight)) == null && maxHeight > 0)
-		{
-			maxHeight--;
-		}
-		if (items == null)
-		{
-			return null;
-		}
-		int maxWidth = 0;
-		for (int k = j; k < field.getWidth(); k++)
-		{
-			if (field.isOccupied(k, i))
-				break;
-			maxWidth++;
-		}
-		tile = null;
-		while ((tile = items.getSecureByWidth(maxWidth)) == null && maxWidth > 0)
-		{
-			maxWidth--;
-		}
-		return tile;
-	}
-
-	//	private void undoLastMove(HistoryValue hv)
-	//	{
-	//		undoneHistory.add(hv);
-	//		field.undo(hv.getTile(), hv.getX(), hv.getY());
-	//		list.setUnUsed(hv.getTile());
-	//	}
 }

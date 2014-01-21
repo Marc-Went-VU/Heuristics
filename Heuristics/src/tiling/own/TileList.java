@@ -65,6 +65,18 @@ public class TileList
 		return list.get(pos).getTile();
 	}
 
+	public Tile getFirstAvailable()
+	{
+		pos = 0;
+		while (!list.get(pos).freeToUse())
+		{
+			pos++;
+		}
+		if (pos < 0 || pos >= list.size())
+			return null;
+		return list.get(pos).getTile();
+	}
+
 	public boolean remove(Tile t)
 	{
 		TileItem ti = findTileItem(t);

@@ -86,7 +86,7 @@ public class TilingProblem
 
 	public static void main(String[] args)
 	{
-		boolean multiple = true;
+		boolean multiple = false;
 		if (multiple)
 		{
 			int counter = 0;
