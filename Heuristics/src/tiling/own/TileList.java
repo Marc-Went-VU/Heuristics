@@ -328,4 +328,14 @@ public class TileList
 		}
 	}
 
+	public ArrayList<Tile> getAvailableTiles()
+	{
+		ArrayList<Tile> tiles = new ArrayList<Tile>();
+		for (TileItem ti : list)
+		{
+			if (ti.freeToUse())
+				tiles.add(ti.getTile());
+		}
+		return tiles;
+	}
 }

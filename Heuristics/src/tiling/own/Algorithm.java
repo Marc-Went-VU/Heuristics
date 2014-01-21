@@ -1,5 +1,7 @@
 package tiling.own;
 
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 import tiling.Field;
 import tiling.Tile;
 import tiling.TileSet;
@@ -10,10 +12,14 @@ public class Algorithm
 {
 	public static final int DELAY = 200;
 	public static final boolean DEBUG = false;
+
 	private TilingFrame frame;
 	private Field field;
 	private TileList list;
 	private History history;
+
+	private int numSearchSteps;
+	private int maxSteps = -1;
 
 	//	private History undoneHistory;
 
@@ -28,57 +34,46 @@ public class Algorithm
 
 	public void runAlgorithm()
 	{
-		Coord c = new Coord(0, 0);
-		algo(field, c, c);
+		PriorityQueue<Tile> openSet = new PriorityQueue<Tile>();
+		openSet.add(list.getFirstAvailable());
+		ArrayList<Tile> closedSet = new ArrayList<Tile>();
+		this.numSearchSteps = 0;
+		while (openSet.size() > 0 && (maxSteps < 0 || this.numSearchSteps < maxSteps))
+		{
+			Tile t = openSet.poll();
+			/*
+			 * if(goalNode.inGoal(t)
+			 * return t;
+			 */
+			ArrayList<Tile> successors = list.getAvailableTiles();
+			for (Tile successor : successors)
+			{
+				boolean inOpenSet;
+				if (closedSet.contains(successor))
+					continue;
+				Tile discSuccessorNode = getNode(openSet, successor);
+				if (discSuccessorNode != null)
+					inOpenSet = true;
+				else
+					inOpenSet = false;
+
+				int tentativeG = field.getFreeArea() + successor.getArea();
+
+				if (inOpenSet && tentativeG >= field.getFreeArea())
+					continue;
+			}
+		}
 	}
 
-	private void algo(Field f, Coord c, Coord c2)
+	private Tile getNode(PriorityQueue<Tile> queue, Tile searchedNode)
 	{
-		Tile tile1 = list.getFirstAvailable();
-		if (f.placeTileSecure(tile1, c.getX(), c.getY()))
+		for (Tile openSearchNode : queue)
 		{
-			list.setUsed(tile1);
-			algo(f, new Coord(c.getX() + tile1.getWidth(), c.getY()), new Coord(c.getX(), c.getY() + tile1.getHeight()));
+			if (openSearchNode.equals(searchedNode))
+			{
+				return openSearchNode;
+			}
 		}
-		tile1 = list.getFirstAvailable();
-		if (c2 != null && f.placeTileSecure(tile1, c2.getX(), c2.getY()))
-		{
-			list.setUsed(tile1);
-			algo(f, new Coord(c2.getX() + tile1.getWidth(), c2.getY()), new Coord(c2.getX(), c2.getY() + tile1.getHeight()));
-		}
-		list.printFree();
-	}
-
-	private class Coord
-	{
-		private int y;
-		private int x;
-
-		Coord(int x, int y)
-		{
-			this.setX(x);
-			this.setY(y);
-		}
-
-		public int getX()
-		{
-			return x;
-		}
-
-		public void setX(int x)
-		{
-			this.x = x;
-		}
-
-		public int getY()
-		{
-			return y;
-		}
-
-		public void setY(int y)
-		{
-			this.y = y;
-		}
-
+		return null;
 	}
 }
