@@ -41,7 +41,7 @@ public class Algorithm
 	{
 		final FieldSet start = new FieldSet(firstField, null, 0);
 		ArrayList<FieldSet> closedSet = new ArrayList<FieldSet>();
-		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>();
+		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>(1, new FieldSetComparator());
 
 		openSet.add(start);
 		ArrayList<FieldSet> parent = null;

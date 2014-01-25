@@ -35,7 +35,7 @@ public class FieldSet implements Comparable<FieldSet>
 	private double calculateScore()
 	{
 		double score = field.freeSpace();
-		score *= (1 / depth);
+		score *= (1 / (depth + 1));
 		return score;
 	}
 
@@ -43,9 +43,9 @@ public class FieldSet implements Comparable<FieldSet>
 	public int compareTo(FieldSet o)
 	{
 		if (this.score < o.score)
-			return -1;
-		else if (this.score > o.score)
 			return 1;
+		else if (this.score > o.score)
+			return -1;
 		else
 			return 0;
 	}
