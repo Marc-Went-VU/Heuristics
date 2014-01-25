@@ -2,6 +2,7 @@ package tiling.own;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import tiling.Tile;
 import tiling.TileSet;
@@ -87,9 +88,9 @@ public class TileList
 		return false;
 	}
 
-	public Tile getByWidth(int w, SORT s)
+	public Tile getByWidth(int w, List<Tile> toExclude, SORT s)
 	{
-		TileList items = getListByWidth(w);
+		TileList items = getListByWidth(w, toExclude);
 		if (items == null)
 			return null;
 		switch (s)
@@ -102,7 +103,7 @@ public class TileList
 		}
 	}
 
-	public TileList getListByWidth(int w)
+	public TileList getListByHeight(int h, List<Tile> toExclude)
 	{
 		ArrayList<TileItem> items = new ArrayList<TileItem>();
 		TileItem item = null;
@@ -113,38 +114,12 @@ public class TileList
 			if (!item.freeToUse())
 				continue;
 			t = item.getTile();
-			if (t.getWidth() == w)
-				tryAdd(items, item);
-			else if (t.getHeight() == w)
+			if (t.getWidth() == h && !toExclude.contains(t))
 			{
 				t.rotate();
 				tryAdd(items, item);
 			}
-
-		}
-		if (items.size() == 0)
-			return null;
-		return new TileList(items);
-
-	}
-
-	public TileList getListByHeight(int h)
-	{
-		ArrayList<TileItem> items = new ArrayList<TileItem>();
-		TileItem item = null;
-		Tile t;
-		for (int i = 0; i < list.size(); i++)
-		{
-			item = list.get(i);
-			if (!item.freeToUse())
-				continue;
-			t = item.getTile();
-			if (t.getWidth() == h)
-			{
-				t.rotate();
-				tryAdd(items, item);
-			}
-			else if (t.getHeight() == h)
+			else if (t.getHeight() == h && !toExclude.contains(t))
 			{
 				tryAdd(items, item);
 			}
@@ -155,9 +130,9 @@ public class TileList
 		return new TileList(items);
 	}
 
-	public Tile getByHeight(int h, SORT s)
+	public Tile getByHeight(int h, List<Tile> toExclude, SORT s)
 	{
-		TileList items = getListByHeight(h);
+		TileList items = getListByHeight(h, toExclude);
 		if (items == null)
 			return null;
 		switch (s)
@@ -202,6 +177,31 @@ public class TileList
 		return null;
 	}
 
+	public TileList getListByWidth(int w, List<Tile> toExclude)
+	{
+		ArrayList<TileItem> items = new ArrayList<TileItem>();
+		TileItem item = null;
+		Tile t;
+		for (int i = 0; i < list.size(); i++)
+		{
+			item = list.get(i);
+			if (!item.freeToUse())
+				continue;
+			t = item.getTile();
+			if (t.getWidth() == w && !toExclude.contains(t))
+				tryAdd(items, item);
+			else if (t.getHeight() == w && !toExclude.contains(t))
+			{
+				t.rotate();
+				tryAdd(items, item);
+			}
+
+		}
+		if (items.size() == 0)
+			return null;
+		return new TileList(items);
+	}
+
 	public Tile getBiggest()
 	{
 		TileItem item = null;
@@ -224,6 +224,19 @@ public class TileList
 	{
 		TileItem ti = findTileItem(t);
 		ti.setUnUsed();
+	}
+
+	public int numberOfFree()
+	{
+		int j = 0;
+		TileItem item;
+		for (int i = 0; i < list.size(); i++)
+		{
+			item = list.get(i);
+			if (item.freeToUse())
+				j++;
+		}
+		return j;
 	}
 
 	public void printFree()

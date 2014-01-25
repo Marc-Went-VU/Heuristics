@@ -154,4 +154,18 @@ public class Field
 	{
 		return !field[x][y].isEmpty();
 	}
+
+	public int freeSpace()
+	{
+		int free = 0;
+		for (ArrayList<Tile>[] one : this.field)
+		{
+			for (ArrayList<Tile> two : one)
+			{
+				if (two.isEmpty())
+					free++;
+			}
+		}
+		return free;
+	}
 }

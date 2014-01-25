@@ -45,4 +45,15 @@ public class History
 		return false;
 		//				return list.contains(hv);
 	}
+
+	public boolean contains(Tile t, int x, int y)
+	{
+		for (int i = list.size() - 1; i >= 0; i--)
+		{
+			HistoryValue hv = list.get(i);
+			if (hv.getTile().equals(t))
+				return true;
+		}
+		return false;
+	}
 }

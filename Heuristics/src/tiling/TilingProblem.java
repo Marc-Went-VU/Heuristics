@@ -121,7 +121,7 @@ public class TilingProblem
 		{
 			int t = 15;
 			int x = 0;
-			int y = 0;
+			int y = 1;
 			new TilingProblem().start(t, x, y);
 		}
 	}

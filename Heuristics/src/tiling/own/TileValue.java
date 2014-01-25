@@ -1,14 +1,14 @@
-package tiling.own.history;
+package tiling.own;
 
 import tiling.Tile;
 
-public class HistoryValue
+public class TileValue
 {
 	private Tile t;
 	private int x;
 	private int y;
 
-	public HistoryValue(Tile t, int x, int y)
+	public TileValue(Tile t, int x, int y)
 	{
 		this.t = t;
 		this.x = x;
@@ -33,9 +33,9 @@ public class HistoryValue
 	@Override
 	public boolean equals(Object o)
 	{
-		if (o instanceof HistoryValue)
+		if (o instanceof TileValue)
 		{
-			HistoryValue hv = (HistoryValue)o;
+			TileValue hv = (TileValue)o;
 			return this.getTile() == hv.getTile() && this.getX() == hv.getX() && this.getY() == hv.getY();
 		}
 		return false;

@@ -1,105 +1,96 @@
 package tiling.own;
 
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 import tiling.Field;
-import tiling.Tile;
 import tiling.TileSet;
 import tiling.TilingFrame;
-import tiling.own.TileList.SORT;
 import tiling.own.history.History;
 
 public class Algorithm
 {
-	public static final int DELAY = 200;
+	public static final int DELAY = 10;
 	public static final boolean DEBUG = false;
-
 	private TilingFrame frame;
-	private Field field;
+	private Field currentField;
+	private final Field firstField;
 	private TileList list;
 	private History history;
 
-	private int numSearchSteps;
-	private int maxSteps = -1;
-
-	//	private History undoneHistory;
+	private Field undo;
 
 	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
 		this.frame = frame;
-		this.field = field;
+		this.firstField = this.currentField = field;
 		this.list = new TileList(tiles);
 		this.history = new History();
-		//		this.undoneHistory = new History();
+		this.undo = new Field(this.currentField.getWidth(), this.currentField.getHeight());
 	}
 
 	public void runAlgorithm()
 	{
-		algo(0, 0, DIR.HEIGHT);
-		list.printFree();
-	}
-
-	private void algo(int x, int y, DIR d)
-	{
-
-		int maxWidth = getBiggest(x, y, d);
-		Tile t = getBiggestTile(maxWidth, d);
-		if (t == null)
-			return;
-		if (field.placeTileSecure(t, x, y))
+		ArrayList<TileValue> items = algo();
+		for (TileValue ti : items)
 		{
-			list.setUsed(t);
-			frame.redraw(DELAY);
+			firstField.placeTileSecure(ti.getTile(), ti.getX(), ti.getY());
 		}
-
-		algo(x, y + t.getHeight(), d);
-		algo(x + t.getWidth(), y, d);
 	}
 
-	private Tile getBiggestTile(int maxSize, DIR d)
+	private ArrayList<TileValue> algo()
 	{
-		Tile t = null;
-		if (d == DIR.WIDTH)
+		final FieldSet start = new FieldSet(firstField, null, 0);
+		ArrayList<FieldSet> closedSet = new ArrayList<FieldSet>();
+		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>();
+
+		openSet.add(start);
+		ArrayList<FieldSet> parent = null;
+		FieldSet goal = null;
+
+		while (!openSet.isEmpty())
 		{
-			while (maxSize > 0 && (t = list.getByWidth(maxSize, SORT.AREA)) == null)
+			FieldSet fs = openSet.poll();
+			if (fs.getHScore() == 0)
+				return reconstructPath(parent, goal);
+			closedSet.add(fs);
+			for (FieldSet neighbor : fs.getNeighbours())
 			{
-				maxSize--;
+				if (closedSet.contains(neighbor))
+					continue;
+				double tent_g_score = fs.getGScore() + start.getHScore();
+
+				if (!openSet.contains(neighbor))
+				{
+					openSet.add(neighbor);
+					neighbor.setFrom(fs);
+					neighbor.setGScore(tent_g_score);
+				}
+				else if (tent_g_score < neighbor.getGScore())
+				{
+					neighbor.setFrom(fs);
+					neighbor.setGScore(tent_g_score);
+				}
 			}
+		}
+		return null;
+	}
+
+	private ArrayList<TileValue> reconstructPath(ArrayList<FieldSet> from, FieldSet current)
+	{
+		ArrayList<TileValue> path = new ArrayList<TileValue>();
+		if (from.contains(current))
+		{
+			FieldSet fs = from.get(from.indexOf(current) - 1);
+			path.addAll(reconstructPath(from, fs));
+			path.add(current.getPlacedTile());
+			return path;
 		}
 		else
 		{
-			while (maxSize > 0 && (t = list.getByHeight(maxSize, SORT.AREA)) == null)
-			{
-				maxSize--;
-			}
+			ArrayList<TileValue> item = new ArrayList<TileValue>();
+			item.add(current.getPlacedTile());
+			return item;
 		}
-		return t;
 	}
 
-	private int getBiggest(int x, int y, DIR d)
-	{
-		int size = 0;
-
-		while (x < field.getWidth() && y < field.getHeight() && !field.isOccupied(x, y))
-		{
-			size++;
-			if (d == DIR.WIDTH)
-			{
-				x++;
-				if (x >= field.getWidth())
-					return size;
-			}
-			else
-			{
-				y++;
-				if (y >= field.getHeight())
-					return size;
-			}
-		}
-		return size;
-	}
-
-	public enum DIR
-	{
-		WIDTH,
-		HEIGHT
-	}
 }
