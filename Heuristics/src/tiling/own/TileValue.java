@@ -29,7 +29,7 @@ public class TileValue
 		if (o instanceof TileValue)
 		{
 			TileValue hv = (TileValue)o;
-			return this.getTile() == hv.getTile() && this.c.equals(hv.getCoordinate());
+			return this.getTile().equals(hv.getTile()) && this.c.equals(hv.getCoordinate());
 		}
 		return false;
 	}

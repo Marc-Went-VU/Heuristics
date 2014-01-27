@@ -77,4 +77,9 @@ public class FieldCanvas extends JPanel
 			}
 		}
 	}
+
+	public void setField(Field f)
+	{
+		this.field = f;
+	}
 }

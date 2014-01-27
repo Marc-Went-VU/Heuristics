@@ -71,4 +71,9 @@ public class TilingFrame extends JFrame
 			e.printStackTrace();
 		}
 	}
+
+	public void setField(Field f)
+	{
+		fieldCanvas.setField(f);
+	}
 }

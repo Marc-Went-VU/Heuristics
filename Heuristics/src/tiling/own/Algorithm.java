@@ -31,6 +31,11 @@ public class Algorithm
 	public void runAlgorithm()
 	{
 		ArrayList<TileValue> items = algo();
+		if (items == null)
+		{
+			System.err.println("Algorithm didn't find solution :/");
+			return;
+		}
 		for (TileValue ti : items)
 		{
 			Coordinate c = ti.getCoordinate();
@@ -40,12 +45,12 @@ public class Algorithm
 
 	private ArrayList<TileValue> algo()
 	{
-		final FieldSet start = new FieldSet(firstField, null, null, 0); //TODO: Open Tiles!
+		final FieldSet start = new FieldSet(null, firstField, null, list.getTileArray(), 0);
 		ArrayList<FieldSet> closedSet = new ArrayList<FieldSet>();
 		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>(1, new FieldSetComparator());
 
 		openSet.add(start);
-		ArrayList<FieldSet> parent = null;
+		ArrayList<FieldSet> parent = new ArrayList<FieldSet>();
 		FieldSet goal = null;
 
 		while (!openSet.isEmpty())
@@ -54,6 +59,9 @@ public class Algorithm
 			if (fs.getHScore() == 0)
 				return reconstructPath(parent, goal);
 			closedSet.add(fs);
+			Field f = fs.getField();
+			frame.setField(f);
+			frame.redraw(200);
 			for (FieldSet neighbor : fs.getNeighbours())
 			{
 				if (closedSet.contains(neighbor))

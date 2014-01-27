@@ -16,6 +16,12 @@ public class Coordinate
 		this.y = c.getY();
 	}
 
+	public Coordinate(Coordinate c, int width, int height)
+	{
+		this.x = c.getX() + width;
+		this.y = c.getY() + height;
+	}
+
 	public int getX()
 	{
 		return x;

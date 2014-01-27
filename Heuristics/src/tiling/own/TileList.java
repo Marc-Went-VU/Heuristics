@@ -32,6 +32,16 @@ public class TileList
 		pos = 0;
 	}
 
+	public ArrayList<Tile> getTileArray()
+	{
+		ArrayList<Tile> tiles = new ArrayList<Tile>(list.size());
+		for (TileItem ti : list)
+		{
+			tiles.add(ti.getTile());
+		}
+		return tiles;
+	}
+
 	public boolean hasNext()
 	{
 		return pos < list.size();
