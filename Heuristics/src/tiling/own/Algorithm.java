@@ -33,13 +33,14 @@ public class Algorithm
 		ArrayList<TileValue> items = algo();
 		for (TileValue ti : items)
 		{
-			firstField.placeTileSecure(ti.getTile(), ti.getX(), ti.getY());
+			Coordinate c = ti.getCoordinate();
+			firstField.placeTileSecure(ti.getTile(), c.getX(), c.getY());
 		}
 	}
 
 	private ArrayList<TileValue> algo()
 	{
-		final FieldSet start = new FieldSet(firstField, null, 0);
+		final FieldSet start = new FieldSet(firstField, null, null, 0); //TODO: Open Tiles!
 		ArrayList<FieldSet> closedSet = new ArrayList<FieldSet>();
 		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>(1, new FieldSetComparator());
 

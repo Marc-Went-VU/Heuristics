@@ -5,14 +5,12 @@ import tiling.Tile;
 public class TileValue
 {
 	private Tile t;
-	private int x;
-	private int y;
+	private Coordinate c;
 
-	public TileValue(Tile t, int x, int y)
+	public TileValue(Tile t, Coordinate c)
 	{
 		this.t = t;
-		this.x = x;
-		this.y = y;
+		this.c = new Coordinate(c);
 	}
 
 	public Tile getTile()
@@ -20,14 +18,9 @@ public class TileValue
 		return this.t;
 	}
 
-	public int getX()
+	public Coordinate getCoordinate()
 	{
-		return this.x;
-	}
-
-	public int getY()
-	{
-		return this.y;
+		return this.c;
 	}
 
 	@Override
@@ -36,7 +29,7 @@ public class TileValue
 		if (o instanceof TileValue)
 		{
 			TileValue hv = (TileValue)o;
-			return this.getTile() == hv.getTile() && this.getX() == hv.getX() && this.getY() == hv.getY();
+			return this.getTile() == hv.getTile() && this.c.equals(hv.getCoordinate());
 		}
 		return false;
 	}
@@ -44,6 +37,6 @@ public class TileValue
 	@Override
 	public String toString()
 	{
-		return "{" + t.toString() + ", x:" + x + ", y:" + y + "}";
+		return "{" + t.toString() + ", " + c.toString() + "}";
 	}
 }

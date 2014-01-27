@@ -2,6 +2,7 @@ package tiling.own;
 
 import java.util.ArrayList;
 import tiling.Field;
+import tiling.Tile;
 
 public class FieldSet implements Comparable<FieldSet>
 {
@@ -9,16 +10,21 @@ public class FieldSet implements Comparable<FieldSet>
 	private int depth;
 	private double score;
 	private TileValue placedTile;
+	private ArrayList<Tile> usableTiles;
 
 	private FieldSet from;
 	private double G;
+	private int freeSpace;
 
-	public FieldSet(Field field, TileValue tileItem, int depth)
+	public FieldSet(Field field, TileValue tileItem, ArrayList<Tile> tiles, int depth)
 	{
 		this.field = field;
 		this.depth = depth;
 		this.placedTile = tileItem;
 		this.score = calculateScore();
+		usableTiles = new ArrayList<Tile>();
+		usableTiles.addAll(tiles);
+		usableTiles.remove(tileItem.getTile());
 	}
 
 	public double getHScore()
@@ -34,9 +40,15 @@ public class FieldSet implements Comparable<FieldSet>
 	//TODO: Scoring heuristic
 	private double calculateScore()
 	{
-		double score = field.freeSpace();
+		double score = 0;
+		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
 		score *= (1 / (depth + 1));
 		return score;
+	}
+
+	public int getFreeSpace()
+	{
+		return freeSpace;
 	}
 
 	@Override
@@ -52,6 +64,21 @@ public class FieldSet implements Comparable<FieldSet>
 
 	public ArrayList<FieldSet> getNeighbours()
 	{
+		ArrayList<FieldSet> neighbors = new ArrayList<FieldSet>();
+		for (Tile usable : usableTiles)
+		{
+			Field f = new Field(this.field);
+			TileValue tileItem = findTileValue(usable);
+			FieldSet fs = new FieldSet(f, tileItem, usableTiles, this.depth + 1);
+			neighbors.add(fs);
+		}
+		return neighbors;
+	}
+
+	private TileValue findTileValue(Tile usable)
+	{
+		Coordinate topLeft = new Coordinate(placedTile.getCoordinate());
+
 		// TODO Auto-generated method stub
 		return null;
 	}
