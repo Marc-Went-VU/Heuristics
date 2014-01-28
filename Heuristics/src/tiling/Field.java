@@ -27,7 +27,14 @@ public class Field
 	public Field(Field src)
 	{
 		this(src.width, src.height);
-		this.field = src.field.clone();
+		for (int i = 0; i < src.width; i++)
+		{
+			for (int j = 0; j < src.height; j++)
+			{
+				field[i][j] = new ArrayList<Tile>();
+				field[i][j].addAll(src.getTiles(i, j));
+			}
+		}
 	}
 
 	public List<Tile> getTiles(int x, int y)

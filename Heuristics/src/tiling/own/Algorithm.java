@@ -61,8 +61,9 @@ public class Algorithm
 			closedSet.add(fs);
 			Field f = fs.getField();
 			frame.setField(f);
-			frame.redraw(200);
-			for (FieldSet neighbor : fs.getNeighbours())
+			frame.redraw(2);
+			ArrayList<FieldSet> neighbors = fs.getNeighbours();
+			for (FieldSet neighbor : neighbors)
 			{
 				if (closedSet.contains(neighbor))
 					continue;

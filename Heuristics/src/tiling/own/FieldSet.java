@@ -81,9 +81,11 @@ public class FieldSet implements Comparable<FieldSet>
 				tileItem = findTileValue(usable.rotate());
 			if (tileItem == null)
 				continue;
-			f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY());
-			FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
-			neighbors.add(fs);
+			if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+			{
+				FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
+				neighbors.add(fs);
+			}
 		}
 		return neighbors;
 	}
