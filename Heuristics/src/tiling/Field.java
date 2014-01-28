@@ -175,4 +175,29 @@ public class Field
 		}
 		return free;
 	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < this.width; i++)
+		{
+			for (int j = 0; j < this.height; j++)
+			{
+				if (isOccupied(i, j))
+				{
+					sb.append('X');
+				}
+				else
+				{
+					sb.append('O');
+				}
+				if (j < this.height - 1)
+					sb.append(',');
+			}
+			if (i < this.width - 1)
+				sb.append('\n');
+		}
+		return sb.toString();
+	}
 }

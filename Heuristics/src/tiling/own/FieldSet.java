@@ -22,6 +22,7 @@ public class FieldSet implements Comparable<FieldSet>
 		this.depth = depth;
 		this.placedTile = tileItem;
 		this.score = calculateScore();
+		this.G = 0;
 		this.from = from;
 		usableTiles = new ArrayList<Tile>();
 		if (tiles != null)
@@ -50,7 +51,7 @@ public class FieldSet implements Comparable<FieldSet>
 	{
 		double score = 0;
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
-		score *= (1 / (depth + 1.0));
+		//score *= (1 / (depth + 1.0));
 		return score;
 	}
 
@@ -109,6 +110,22 @@ public class FieldSet implements Comparable<FieldSet>
 			topLeft = new Coordinate(tmp);
 			bottomRight = new Coordinate(tmp);
 		}
+		//Left && right placedTile
+		if (field.getHeight() > bottomRight.getY())
+		{
+			int xLeft = topLeft.getX();
+			int xRight = bottomRight.getX();
+			for (int y = topLeft.getY() > 0 ? topLeft.getY() : 0; y + usable.getHeight() < field.getHeight()
+				&& y <= bottomRight.getY(); y++)
+			{
+				TileValue tv1 = new TileValue(usable, new Coordinate(xLeft - usable.getWidth(), y));
+				TileValue tv2 = new TileValue(usable, new Coordinate(xRight, y));
+				if (tileFits(tv1))
+					return tv1;
+				else if (tileFits(tv2))
+					return tv2;
+			}
+		}
 		//Above && beneath placedTile
 		if (field.getWidth() > bottomRight.getX())
 		{
@@ -127,22 +144,7 @@ public class FieldSet implements Comparable<FieldSet>
 					return tv2;
 			}
 		}
-		//Left && right placedTile
-		if (field.getHeight() > bottomRight.getY())
-		{
-			int xLeft = topLeft.getX();
-			int xRight = bottomRight.getX();
-			for (int y = topLeft.getY() > 0 ? topLeft.getY() : 0; y + usable.getHeight() < field.getHeight()
-				&& y <= bottomRight.getY(); y++)
-			{
-				TileValue tv1 = new TileValue(usable, new Coordinate(xLeft - usable.getWidth(), y));
-				TileValue tv2 = new TileValue(usable, new Coordinate(xRight, y));
-				if (tileFits(tv1))
-					return tv1;
-				else if (tileFits(tv2))
-					return tv2;
-			}
-		}
+
 		return null;
 	}
 

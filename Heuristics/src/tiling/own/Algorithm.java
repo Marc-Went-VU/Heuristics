@@ -10,7 +10,7 @@ import tiling.own.history.History;
 public class Algorithm
 {
 	public static final int DELAY = 10;
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	private TilingFrame frame;
 	private Field currentField;
 	private final Field firstField;
@@ -62,25 +62,25 @@ public class Algorithm
 				return reconstructPath(parent, goal);
 			closedSet.add(fs);
 			Field f = fs.getField();
-			frame.setField(f);
-			frame.redraw(1);
+			if (DEBUG)
+			{
+				frame.setField(f);
+				frame.redraw(1);
+			}
 			ArrayList<FieldSet> neighbors = fs.getNeighbours();
 			for (FieldSet neighbor : neighbors)
 			{
 				if (closedSet.contains(neighbor))
 					continue;
-				double tent_g_score = fs.getGScore() + start.getHScore();
+				double tent_g_score = fs.getGScore() + (fs.getHScore() - neighbor.getHScore());
 
-				if (!openSet.contains(neighbor))
-				{
-					openSet.add(neighbor);
-					neighbor.setFrom(fs);
-					neighbor.setGScore(tent_g_score);
-				}
-				else if (tent_g_score < neighbor.getGScore())
+				if (!openSet.contains(neighbor) || tent_g_score < neighbor.getGScore())
 				{
 					neighbor.setFrom(fs);
 					neighbor.setGScore(tent_g_score);
+					if (!openSet.contains(neighbor))
+
+						openSet.add(neighbor);
 				}
 			}
 		}
