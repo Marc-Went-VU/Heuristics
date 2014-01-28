@@ -41,6 +41,8 @@ public class Algorithm
 			Coordinate c = ti.getCoordinate();
 			firstField.placeTileSecure(ti.getTile(), c.getX(), c.getY());
 		}
+		frame.setField(firstField);
+		frame.redraw(0);
 	}
 
 	private ArrayList<TileValue> algo()
@@ -61,7 +63,7 @@ public class Algorithm
 			closedSet.add(fs);
 			Field f = fs.getField();
 			frame.setField(f);
-			frame.redraw(2);
+			frame.redraw(1);
 			ArrayList<FieldSet> neighbors = fs.getNeighbours();
 			for (FieldSet neighbor : neighbors)
 			{

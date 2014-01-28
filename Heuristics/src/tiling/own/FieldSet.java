@@ -63,9 +63,9 @@ public class FieldSet implements Comparable<FieldSet>
 	public int compareTo(FieldSet o)
 	{
 		if (this.score < o.score)
-			return 1;
-		else if (this.score > o.score)
 			return -1;
+		else if (this.score > o.score)
+			return 1;
 		else
 			return 0;
 	}
