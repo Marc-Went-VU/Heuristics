@@ -63,7 +63,8 @@ public class FieldSet implements Comparable<FieldSet>
 	{
 		double score = 0;
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
-
+		if (freeSpace == 0)
+			return score;
 		score += (score / ((depth + 1.0)));
 		//		score += placedTile == null ? 0 : (placedTile.getTile().getArea()) / depth;
 		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
@@ -73,6 +74,7 @@ public class FieldSet implements Comparable<FieldSet>
 			Coordinate currC = curr.getCoordinate();
 			Coordinate currCAbove = new Coordinate(currC, 0, -1);
 			Coordinate currCLeft = new Coordinate(currC, -1, 0);
+			Coordinate currCBott = new Coordinate(currC, 0, 1);
 			Tile above = null;
 			if (inField(currCAbove))
 			{
@@ -88,28 +90,40 @@ public class FieldSet implements Comparable<FieldSet>
 					left = tiles.get(0);
 			}
 
-			int prefferedWidth = above == null ? getMaxWidth(currC) : above.getWidth();
-			int prefferedHeight = left == null ? getMaxHeight(currC) : left.getHeight();
+			int maxWidth = 0;
+			int maxHeight = 0;
+
+			int preferredWidth = above == null ? maxWidth = getMaxWidth(currC) : above.getWidth();
+			int preferredHeight = left == null ? maxHeight = getMaxHeight(currC) : left.getHeight();
 
 			Tile t = curr.getTile();
-			if (t.getWidth() == prefferedWidth && t.getHeight() == prefferedHeight)
+			if (t.getWidth() == preferredWidth && t.getHeight() == preferredHeight)
 				score = 0;
 			else
 			{
-				if (t.getWidth() == prefferedWidth)
+				int widthPenalty = Math.abs(preferredWidth - curr.getTile().getWidth());
+				int heightPenalty = Math.abs(preferredHeight - curr.getTile().getHeight());
+				if (t.getWidth() == preferredWidth)
+				{
+					if (maxWidth != 0 || !inField(new Coordinate(currC, curr.getTile().getWidth(), 0)))
+						score -= heightPenalty;
 					score -= 10;
-				else if (prefferedWidth != Integer.MIN_VALUE)
-					score += Math.abs(prefferedWidth - curr.getTile().getWidth());
-				if (t.getHeight() == prefferedHeight)
+				}
+				else if (preferredWidth != Integer.MIN_VALUE)
+					score += widthPenalty;
+
+				if (t.getHeight() == preferredHeight)
+				{
+					if (maxHeight != 0 || !inField(currCBott))
+						score -= widthPenalty;
 					score -= 10;
-				else if (prefferedHeight != Integer.MIN_VALUE)
-					score += Math.abs(prefferedHeight - curr.getTile().getHeight());
+				}
+				else if (preferredHeight != Integer.MIN_VALUE)
+					score += heightPenalty;
 			}
 			if (score <= 0)
 				score = 1;
 		}
-		if (freeSpace == 0)
-			score = 0;
 		return score;
 	}
 
