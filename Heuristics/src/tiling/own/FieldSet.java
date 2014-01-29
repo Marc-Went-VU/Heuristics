@@ -1,6 +1,7 @@
 package tiling.own;
 
 import java.util.ArrayList;
+import java.util.List;
 import tiling.Field;
 import tiling.Tile;
 
@@ -68,51 +69,73 @@ public class FieldSet implements Comparable<FieldSet>
 		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
 		if (from != null)
 		{
-			TileValue prev = from.getPlacedTile();
-			if (prev != null)
+			TileValue curr = getPlacedTile();
+			Coordinate currC = curr.getCoordinate();
+			Coordinate currCAbove = new Coordinate(currC, 0, -1);
+			Coordinate currCLeft = new Coordinate(currC, -1, 0);
+			Tile above = null;
+			if (inField(currCAbove))
 			{
-				TileValue curr = getPlacedTile();
-				if (curr.getCoordinate().getX() > prev.getCoordinate().getX())
-				{
-					int prefferedHeight = prev.getTile().getHeight() - (curr.getCoordinate().getY() - prev.getCoordinate().getY());
-					if (curr.getTile().getHeight() > prefferedHeight)
-						score += (depth + 1.0) * Math.abs(prefferedHeight - curr.getTile().getHeight());
-					else if (curr.getTile().getHeight() < prefferedHeight)
-						score += (depth + 1.0) * Math.abs(prefferedHeight + curr.getTile().getHeight());
-					else
-					{
-						score -= 10;
-						if (score <= 0)
-							score = 1;
-					}
-				}
-				else if (curr.getCoordinate().getY() > prev.getCoordinate().getY())
-				{
-
-					int preferredWidth = 0;
-					for (int i = curr.getCoordinate().getX(); i < this.field.getWidth(); i++)
-					{
-						preferredWidth++;
-						if (this.field.isOccupied(i, curr.getCoordinate().getY()))
-							break;
-
-					}
-
-					if (curr.getTile().getWidth() != preferredWidth)
-						score += 10;
-					else
-					{
-						score -= 10;
-						if (score <= 0)
-							score = 1;
-					}
-				}
-
+				List<Tile> tiles = this.field.getTiles(currCAbove.getX(), currCAbove.getY());
+				if (!tiles.isEmpty())
+					above = tiles.get(0);
 			}
+			Tile left = null;
+			if (inField(currCLeft))
+			{
+				List<Tile> tiles = this.field.getTiles(currCLeft.getX(), currCLeft.getY());
+				if (!tiles.isEmpty())
+					left = tiles.get(0);
+			}
+
+			int prefferedWidth = above == null ? getMaxWidth(currC) : above.getWidth();
+			int prefferedHeight = left == null ? getMaxHeight(currC) : left.getHeight();
+
+			Tile t = curr.getTile();
+			if (t.getWidth() == prefferedWidth && t.getHeight() == prefferedHeight)
+				score = 0;
+			else
+			{
+				if (t.getWidth() == prefferedWidth)
+					score -= 10;
+				else if (prefferedWidth != Integer.MIN_VALUE)
+					score += Math.abs(prefferedWidth - curr.getTile().getWidth());
+				if (t.getHeight() == prefferedHeight)
+					score -= 10;
+				else if (prefferedHeight != Integer.MIN_VALUE)
+					score += Math.abs(prefferedHeight - curr.getTile().getHeight());
+			}
+			if (score <= 0)
+				score = 1;
 		}
 		if (freeSpace == 0)
 			score = 0;
 		return score;
+	}
+
+	private int getMaxHeight(Coordinate c)
+	{
+		int max = 0;
+		for (int i = c.getY(); i < this.field.getHeight(); i++)
+		{
+			max++;
+			if (this.from.getField().isOccupied(c.getX(), i))
+				break;
+		}
+		// TODO Auto-generated method stub
+		return max;
+	}
+
+	private int getMaxWidth(Coordinate c)
+	{
+		int max = 0;
+		for (int i = c.getX(); i < this.field.getWidth(); i++)
+		{
+			max++;
+			if (this.from.getField().isOccupied(i, c.getY()))
+				break;
+		}
+		return max;
 	}
 
 	public int getFreeSpace()
