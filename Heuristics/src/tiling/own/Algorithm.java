@@ -52,14 +52,12 @@ public class Algorithm
 		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>(1, new FieldSetComparator());
 
 		openSet.add(start);
-		ArrayList<FieldSet> parent = new ArrayList<FieldSet>();
-		FieldSet goal = null;
 
 		while (!openSet.isEmpty())
 		{
 			FieldSet fs = openSet.poll();
 			if (fs.getHScore() == 0)
-				return reconstructPath(parent, goal);
+				return reconstructPath(fs);
 			closedSet.add(fs);
 			Field f = fs.getField();
 			if (DEBUG)
@@ -87,22 +85,14 @@ public class Algorithm
 		return null;
 	}
 
-	private ArrayList<TileValue> reconstructPath(ArrayList<FieldSet> from, FieldSet current)
+	private ArrayList<TileValue> reconstructPath(FieldSet current)
 	{
 		ArrayList<TileValue> path = new ArrayList<TileValue>();
-		if (from.contains(current))
-		{
-			FieldSet fs = from.get(from.indexOf(current) - 1);
-			path.addAll(reconstructPath(from, fs));
-			path.add(current.getPlacedTile());
+		if (current.getPlacedTile() == null)
 			return path;
-		}
-		else
-		{
-			ArrayList<TileValue> item = new ArrayList<TileValue>();
-			item.add(current.getPlacedTile());
-			return item;
-		}
+		path.add(current.getPlacedTile());
+		path.addAll(reconstructPath(current.getFrom()));
+		return path;
 	}
 
 }

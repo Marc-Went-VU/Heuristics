@@ -180,11 +180,11 @@ public class Field
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < this.width; i++)
+		for (int i = 0; i < this.height; i++)
 		{
-			for (int j = 0; j < this.height; j++)
+			for (int j = 0; j < this.width; j++)
 			{
-				if (isOccupied(i, j))
+				if (isOccupied(j, i))
 				{
 					sb.append('X');
 				}

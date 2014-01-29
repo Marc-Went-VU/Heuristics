@@ -51,7 +51,7 @@ public class FieldSet implements Comparable<FieldSet>
 	{
 		double score = 0;
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
-		//score *= (1 / (depth + 1.0));
+		score *= ((depth + 1.0));
 		return score;
 	}
 
@@ -74,21 +74,111 @@ public class FieldSet implements Comparable<FieldSet>
 	public ArrayList<FieldSet> getNeighbours()
 	{
 		ArrayList<FieldSet> neighbors = new ArrayList<FieldSet>();
-		for (Tile usable : usableTiles)
+		ArrayList<Coordinate> placableCoordinates = getFreeNeighborCoordinates();
+		if (placableCoordinates.isEmpty())
+			placableCoordinates.add(new Coordinate(0, 0));
+		for (Coordinate pC : placableCoordinates)
 		{
-			Field f = new Field(this.field);
-			TileValue tileItem = findTileValue(usable);
-			if (tileItem == null)
-				tileItem = findTileValue(usable.rotate());
-			if (tileItem == null)
-				continue;
-			if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+			int maxWidth = 0;
+			for (int i = pC.getX(); i < field.getWidth(); i++)
 			{
-				FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
-				neighbors.add(fs);
+				maxWidth++;
+				if (field.isOccupied(i, pC.getY()))
+					break;
+			}
+			ArrayList<Tile> usage = null;
+			int tmpMaxWidth = maxWidth;
+			while (usage == null && tmpMaxWidth > 0)
+			{
+				usage = findUsable(usableTiles, tmpMaxWidth--);
+			}
+			ArrayList<Tile> nonUsable = new ArrayList<Tile>();
+			nonUsable.addAll(usableTiles);
+			nonUsable.removeAll(usage);
+			for (Tile u : usage)
+			{
+				Field f = new Field(this.field);
+				TileValue tileItem = new TileValue(u, pC);
+				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+				{
+					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
+					neighbors.add(fs);
+				}
+				else
+					nonUsable.add(u.rotate());
+			}
+			usage = null;
+			tmpMaxWidth = maxWidth;
+			while (usage == null && tmpMaxWidth > 0)
+			{
+				usage = findUsable(nonUsable, tmpMaxWidth--);
+			}
+
+			for (Tile u : usage)
+			{
+				Field f = new Field(this.field);
+				TileValue tileItem = new TileValue(u, pC);
+				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+				{
+					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
+					neighbors.add(fs);
+				}
+				else
+					u.rotate();
 			}
 		}
+
 		return neighbors;
+	}
+
+	private ArrayList<Tile> findUsable(ArrayList<Tile> usableTiles, int maxWidth)
+	{
+		ArrayList<Tile> tiles = new ArrayList<Tile>();
+		for (Tile t : usableTiles)
+		{
+			if (t.getWidth() <= maxWidth)
+				tiles.add(t);
+			if (t.getHeight() == maxWidth)
+			{
+				tiles.add(t.rotate());
+			}
+		}
+		return tiles;
+	}
+
+	private ArrayList<Coordinate> getFreeNeighborCoordinates()
+	{
+		ArrayList<Coordinate> ac = new ArrayList<Coordinate>();
+		for (int i = 0; i < this.field.getHeight(); i++)
+		{
+			for (int j = 0; j < this.field.getWidth(); j++)
+			{
+				Coordinate c = new Coordinate(j, i);
+				if (!this.field.isOccupied(c.getX(), c.getY()) && hasNeighbors(this.field, c))
+					ac.add(c);
+
+			}
+		}
+		return ac;
+	}
+
+	private boolean hasNeighbors(Field field2, Coordinate c)
+	{
+		Coordinate cN = new Coordinate(c, 0, -1);
+		Coordinate cE = new Coordinate(c, 1, 0);
+		Coordinate cS = new Coordinate(c, 0, 1);
+		Coordinate cW = new Coordinate(c, -1, 0);
+
+		if (this.inField(cN) && field2.isOccupied(cN.getX(), cN.getY()))
+			return true;
+		else if (this.inField(cE) && field2.isOccupied(cE.getX(), cE.getY()))
+			return true;
+		else if (this.inField(cS) && field2.isOccupied(cS.getX(), cS.getY()))
+			return true;
+		else if (this.inField(cW) && field2.isOccupied(cW.getX(), cW.getY()))
+			return true;
+		else
+			return false;
 	}
 
 	private TileValue findTileValue(Tile usable)
@@ -118,7 +208,7 @@ public class FieldSet implements Comparable<FieldSet>
 			for (int y = topLeft.getY() > 0 ? topLeft.getY() : 0; y + usable.getHeight() < field.getHeight()
 				&& y <= bottomRight.getY(); y++)
 			{
-				TileValue tv1 = new TileValue(usable, new Coordinate(xLeft - usable.getWidth(), y));
+				TileValue tv1 = new TileValue(usable, new Coordinate(xLeft - usable.getWidth() + 1, y));
 				TileValue tv2 = new TileValue(usable, new Coordinate(xRight, y));
 				if (tileFits(tv1))
 					return tv1;
@@ -134,7 +224,7 @@ public class FieldSet implements Comparable<FieldSet>
 			for (int x = topLeft.getX() > 0 ? topLeft.getX() : 0; x + usable.getWidth() < field.getWidth()
 				&& x <= bottomRight.getX(); x++)
 			{
-				Coordinate c1 = new Coordinate(x, yAbove - usable.getHeight());
+				Coordinate c1 = new Coordinate(x, yAbove - usable.getHeight() - 1);
 				Coordinate c2 = new Coordinate(x, yBeneath);
 				TileValue tv1 = new TileValue(usable, c1);
 				TileValue tv2 = new TileValue(usable, c2);
