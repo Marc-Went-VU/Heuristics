@@ -37,6 +37,12 @@ public class TileValue
 	@Override
 	public String toString()
 	{
-		return "{" + t.toString() + ", " + c.toString() + "}";
+		return "{"
+			+ t.toString()
+			+ ", "
+			+ c.toString()
+			+ " - "
+			+ Integer.toHexString(System.identityHashCode((Object)this.getTile()))
+			+ "}";
 	}
 }

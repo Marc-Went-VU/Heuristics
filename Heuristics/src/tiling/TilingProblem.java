@@ -9,7 +9,6 @@ public class TilingProblem
 	private Field field;
 	TilingAssignment assignment;
 	private TilingFrame frame;
-	private int numberOfSteps, counter;
 	// Delay in milliseconds, slows down the program so you can see the steps
 	public static final int DELAY = 200;
 
@@ -24,7 +23,6 @@ public class TilingProblem
 	{
 		field = new Field(fieldWidth, fieldHeight);
 		frame = new TilingFrame(this.field, scale);
-		numberOfSteps = counter = 0;
 	}
 
 	public void start()
@@ -86,7 +84,7 @@ public class TilingProblem
 
 	public static void main(String[] args)
 	{
-		boolean multiple = false;
+		boolean multiple = true;
 		if (multiple)
 		{
 			int counter = 0;
@@ -97,8 +95,8 @@ public class TilingProblem
 					for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
 					{
 						System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
-						//if (counter >= Runtime.getRuntime().availableProcessors() - 2)
-						//break;
+						if (counter >= Runtime.getRuntime().availableProcessors() - 2)
+							break;
 						final int ti = t.getI();
 						final int xi = x.getI();
 						final int yi = y.getI();
@@ -120,7 +118,7 @@ public class TilingProblem
 		else
 		{
 			int t = 15;
-			int x = 0;
+			int x = 1;
 			int y = 0;
 			new TilingProblem().start(t, x, y);
 		}

@@ -200,4 +200,29 @@ public class Field
 		}
 		return sb.toString();
 	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o == null || !(o instanceof Field))
+			return false;
+		Field f = (Field)o;
+		for (int i = 0; i < this.getWidth(); i++)
+		{
+			for (int j = 0; j < this.getHeight(); j++)
+			{
+				ArrayList<Tile> thisTiles = this.field[i][j];
+				ArrayList<Tile> otherTiles = f.field[i][j];
+				Tile t1 = thisTiles.isEmpty() ? null : thisTiles.get(0);
+				Tile t2 = otherTiles.isEmpty() ? null : otherTiles.get(0);
+				if (t1 == null && t2 == null)
+					continue;
+				else if (t1 == null || t2 == null)
+					return false;
+				else if (!thisTiles.contains(t2) || !otherTiles.contains(t1))
+					return false;
+			}
+		}
+		return true;
+	}
 }

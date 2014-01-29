@@ -66,6 +66,13 @@ public class Tile implements Comparable<Tile>
 		return super.equals(obj);
 	}
 
+	public boolean equals(Tile t)
+	{
+		return this.getColor().equals(t.getColor())
+			&& ((this.getWidth() == t.getWidth() && this.getHeight() == t.getHeight()) || (this.getWidth() == t.getHeight() && this
+				.getHeight() == t.getWidth()));
+	}
+
 	/**
 	 * Note: this class has a natural ordering that is inconsistent with equals
 	 */

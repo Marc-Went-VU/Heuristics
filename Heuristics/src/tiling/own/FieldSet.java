@@ -21,14 +21,25 @@ public class FieldSet implements Comparable<FieldSet>
 		this.field = field;
 		this.depth = depth;
 		this.placedTile = tileItem;
+		this.from = from;
 		this.score = calculateScore();
 		this.G = 0;
-		this.from = from;
 		usableTiles = new ArrayList<Tile>();
 		if (tiles != null)
 			usableTiles.addAll(tiles);
 		if (!usableTiles.isEmpty() && tileItem != null)
-			usableTiles.remove(tileItem.getTile());
+		{
+			for (int i = 0; i < usableTiles.size(); i++)
+			{
+				Tile t = usableTiles.get(i);
+				if (t.equals(tileItem.getTile()))
+				{
+					usableTiles.remove(i);
+					break;
+				}
+
+			}
+		}
 	}
 
 	public Field getField()
@@ -51,7 +62,56 @@ public class FieldSet implements Comparable<FieldSet>
 	{
 		double score = 0;
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
-		score *= ((depth + 1.0));
+
+		score += (score / ((depth + 1.0)));
+		//		score += placedTile == null ? 0 : (placedTile.getTile().getArea()) / depth;
+		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
+		if (from != null)
+		{
+			TileValue prev = from.getPlacedTile();
+			if (prev != null)
+			{
+				TileValue curr = getPlacedTile();
+				if (curr.getCoordinate().getX() > prev.getCoordinate().getX())
+				{
+					int prefferedHeight = prev.getTile().getHeight() - (curr.getCoordinate().getY() - prev.getCoordinate().getY());
+					if (curr.getTile().getHeight() > prefferedHeight)
+						score += (depth + 1.0) * Math.abs(prefferedHeight - curr.getTile().getHeight());
+					else if (curr.getTile().getHeight() < prefferedHeight)
+						score += (depth + 1.0) * Math.abs(prefferedHeight + curr.getTile().getHeight());
+					else
+					{
+						score -= 10;
+						if (score <= 0)
+							score = 1;
+					}
+				}
+				else if (curr.getCoordinate().getY() > prev.getCoordinate().getY())
+				{
+
+					int preferredWidth = 0;
+					for (int i = curr.getCoordinate().getX(); i < this.field.getWidth(); i++)
+					{
+						preferredWidth++;
+						if (this.field.isOccupied(i, curr.getCoordinate().getY()))
+							break;
+
+					}
+
+					if (curr.getTile().getWidth() != preferredWidth)
+						score += 10;
+					else
+					{
+						score -= 10;
+						if (score <= 0)
+							score = 1;
+					}
+				}
+
+			}
+		}
+		if (freeSpace == 0)
+			score = 0;
 		return score;
 	}
 
@@ -77,6 +137,7 @@ public class FieldSet implements Comparable<FieldSet>
 		ArrayList<Coordinate> placableCoordinates = getFreeNeighborCoordinates();
 		if (placableCoordinates.isEmpty())
 			placableCoordinates.add(new Coordinate(0, 0));
+
 		for (Coordinate pC : placableCoordinates)
 		{
 			int maxWidth = 0;
@@ -104,9 +165,10 @@ public class FieldSet implements Comparable<FieldSet>
 					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
 					neighbors.add(fs);
 				}
-				else
-					nonUsable.add(u.rotate());
+				//				else
+				//					nonUsable.add(u.rotate());
 			}
+
 			usage = null;
 			tmpMaxWidth = maxWidth;
 			while (usage == null && tmpMaxWidth > 0)
@@ -169,18 +231,32 @@ public class FieldSet implements Comparable<FieldSet>
 		Coordinate cS = new Coordinate(c, 0, 1);
 		Coordinate cW = new Coordinate(c, -1, 0);
 
-		if (this.inField(cN) && field2.isOccupied(cN.getX(), cN.getY()))
+		if (occupied(field2, cN) && occupied(field2, cW))
 			return true;
-		else if (this.inField(cE) && field2.isOccupied(cE.getX(), cE.getY()))
-			return true;
-		else if (this.inField(cS) && field2.isOccupied(cS.getX(), cS.getY()))
-			return true;
-		else if (this.inField(cW) && field2.isOccupied(cW.getX(), cW.getY()))
-			return true;
-		else
-			return false;
+		return false;
+
+		//		if (this.inField(cN) && field2.isOccupied(cN.getX(), cN.getY()))
+		//			return true;
+		//		else if (this.inField(cE) && field2.isOccupied(cE.getX(), cE.getY()))
+		//			return true;
+		//		else if (this.inField(cS) && field2.isOccupied(cS.getX(), cS.getY()))
+		//			return true;
+		//		else if (this.inField(cW) && field2.isOccupied(cW.getX(), cW.getY()))
+		//			return true;
+		//		else
+		//			return false;
 	}
 
+	private boolean occupied(Field f, Coordinate c)
+	{
+		if (!this.inField(c))
+			return true;
+		else if (f.isOccupied(c.getX(), c.getY()))
+			return true;
+		return false;
+	}
+
+	@SuppressWarnings("unused")
 	private TileValue findTileValue(Tile usable)
 	{
 		Coordinate tmp = null;
@@ -294,7 +370,8 @@ public class FieldSet implements Comparable<FieldSet>
 			FieldSet fs = (FieldSet)o;
 			if (fs.getPlacedTile() == null || this.getPlacedTile() == null)
 				return false;
-			this.getPlacedTile().equals(fs.getPlacedTile());
+			return fs.getField().equals(this.getField());
+			//			return this.getPlacedTile().equals(fs.getPlacedTile());
 		}
 		return super.equals(o);
 	}
