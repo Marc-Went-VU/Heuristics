@@ -90,7 +90,7 @@ public class TilingProblem
 			int counter = 0;
 			for (final Int t = new Int(15); t.getI() <= 25; t.add(10))
 			{
-				for (final Int x = new Int(1); x.getI() <= 4; x.add(1))
+				for (final Int x = new Int(2); x.getI() <= 4; x.add(1))
 				{
 					for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
 					{
@@ -118,8 +118,8 @@ public class TilingProblem
 		else
 		{
 			int t = 15;
-			int x = 0;
-			int y = 1;
+			int x = 2;
+			int y = 0;
 			new TilingProblem().start(t, x, y);
 		}
 	}

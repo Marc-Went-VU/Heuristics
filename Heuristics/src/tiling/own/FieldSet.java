@@ -74,29 +74,12 @@ public class FieldSet implements Comparable<FieldSet>
 		{
 			TileValue curr = getPlacedTile();
 			Coordinate currC = curr.getCoordinate();
-			Coordinate currCAbove = new Coordinate(currC, 0, -1);
-			Coordinate currCLeft = new Coordinate(currC, -1, 0);
 			Coordinate currCBott = new Coordinate(currC, 0, 1);
-			Tile above = null;
-			if (inField(currCAbove))
-			{
-				List<Tile> tiles = this.field.getTiles(currCAbove.getX(), currCAbove.getY());
-				if (!tiles.isEmpty())
-					above = tiles.get(0);
-			}
-			Tile left = null;
-			if (inField(currCLeft))
-			{
-				List<Tile> tiles = this.field.getTiles(currCLeft.getX(), currCLeft.getY());
-				if (!tiles.isEmpty())
-					left = tiles.get(0);
-			}
 
-			int maxWidth = 0;
-			int maxHeight = 0;
-
-			int preferredWidth = above == null ? maxWidth = getMaxWidth(currC) : above.getWidth();
-			int preferredHeight = left == null ? maxHeight = getMaxHeight(currC) : left.getHeight();
+			int maxWidth = getMaxWidth(currC);
+			int maxHeight = getMaxHeight(currC);
+			int preferredWidth = getPreferredWidth(currC, maxWidth);
+			int preferredHeight = getPreferredHeight(currC, maxHeight);
 
 			Tile t = curr.getTile();
 			if (t.getWidth() == preferredWidth && t.getHeight() == preferredHeight)
@@ -109,7 +92,7 @@ public class FieldSet implements Comparable<FieldSet>
 				{
 					if (maxWidth != 0 || !inField(new Coordinate(currC, curr.getTile().getWidth(), 0)))
 						score -= heightPenalty;
-					score -= 10;
+					score /= 2;
 				}
 				else if (preferredWidth != Integer.MIN_VALUE)
 					score += widthPenalty;
@@ -118,7 +101,7 @@ public class FieldSet implements Comparable<FieldSet>
 				{
 					if (maxHeight != 0 || !inField(currCBott))
 						score -= widthPenalty;
-					score -= 10;
+					score /= 2;
 				}
 				else if (preferredHeight != Integer.MIN_VALUE)
 					score += heightPenalty;
@@ -129,6 +112,39 @@ public class FieldSet implements Comparable<FieldSet>
 				score = 1;
 		}
 		return score;
+	}
+
+	private int getPreferredHeight(Coordinate currC, int maxHeight)
+	{
+		Coordinate currCLeft = new Coordinate(currC, -1, 0);
+		Tile left = null;
+		if (inField(currCLeft))
+		{
+			List<Tile> tiles = this.field.getTiles(currCLeft.getX(), currCLeft.getY());
+			if (!tiles.isEmpty())
+				left = tiles.get(0);
+		}
+		//		int preferredHeight = left == null ? maxHeight : left.getHeight() > maxHeight ? maxHeight : left.getHeight();
+		int preferredHeight = left == null ? maxHeight : left.getHeight();
+		return preferredHeight;
+	}
+
+	private int getPreferredWidth(Coordinate currC, int maxWidth)
+	{
+		Coordinate currCAbove = new Coordinate(currC, 0, -1);
+
+		Tile above = null;
+		if (inField(currCAbove))
+		{
+			List<Tile> tiles = this.field.getTiles(currCAbove.getX(), currCAbove.getY());
+			if (!tiles.isEmpty())
+				above = tiles.get(0);
+		}
+
+		//		int preferredWidth = above == null ? maxWidth : above.getWidth() > maxWidth ? maxWidth : above.getWidth();
+		int preferredWidth = above == null ? maxWidth : above.getWidth();
+		return preferredWidth;
+
 	}
 
 	private int getMaxHeight(Coordinate c)
@@ -181,8 +197,6 @@ public class FieldSet implements Comparable<FieldSet>
 
 		for (Coordinate pC : placableCoordinates)
 		{
-			if (pC.equals(new Coordinate(6, 21)))
-				System.out.println("blah");
 			int maxWidth = 0;
 			for (int i = pC.getX(); i < field.getWidth(); i++)
 			{
@@ -196,28 +210,6 @@ public class FieldSet implements Comparable<FieldSet>
 			{
 				usage = findUsable(usableTiles, tmpMaxWidth--);
 			}
-			//			ArrayList<Tile> nonUsable = new ArrayList<Tile>();
-			//			nonUsable.addAll(usableTiles);
-			//			nonUsable.removeAll(usage);
-			//			for (Tile u : usage)
-			//			{
-			//				Field f = new Field(this.field);
-			//				TileValue tileItem = new TileValue(u, pC);
-			//				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
-			//				{
-			//					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
-			//					neighbors.add(fs);
-			//				}
-			//				//				else
-			//				//					nonUsable.add(new Tile(u, true));
-			//			}
-
-			//			usage = null;
-			//			tmpMaxWidth = maxWidth;
-			//			while (usage == null && tmpMaxWidth > 0)
-			//			{
-			//				usage = findUsable(nonUsable, tmpMaxWidth--);
-			//			}
 
 			for (Tile u : usage)
 			{
