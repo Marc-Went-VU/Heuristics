@@ -2,7 +2,7 @@ package tiling;
 
 import java.io.IOException;
 import tiling.own.Algorithm;
-import tiling.tmp.Int;
+import tiling.own.Int;
 
 public class TilingProblem
 {
