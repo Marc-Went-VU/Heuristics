@@ -64,10 +64,6 @@ public class Algorithm
 			FieldSet fs = openSet.poll();
 			if (fs.getHScore() == 0)
 			{
-				//				if (DEBUG)
-				//					printPath(fs);
-				//				frame.setField(fs.getField());
-				//				frame.redraw(0);
 				return reconstructPath(fs);
 			}
 			closedSet.add(fs);
@@ -95,16 +91,6 @@ public class Algorithm
 			}
 		}
 		return null;
-	}
-
-	private void printPath(FieldSet fs)
-	{
-		if (fs == null)
-			return;
-		//System.out.println(fs.getField());
-		System.out.println(fs.getPlacedTile());
-		printPath(fs.getFrom());
-
 	}
 
 	private ArrayList<TileValue> reconstructPath(FieldSet current)

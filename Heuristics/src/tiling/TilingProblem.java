@@ -90,12 +90,12 @@ public class TilingProblem
 			int counter = 0;
 			for (final Int t = new Int(15); t.getI() <= 24; t.add(10))
 			{
-				for (final Int x = new Int(0); x.getI() <= 4; x.add(1))
+				for (final Int x = new Int(1); x.getI() <= 4; x.add(1))
 				{
 					for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
 					{
 						System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
-						if (counter >= Runtime.getRuntime().availableProcessors() - 2)
+						if (counter >= Runtime.getRuntime().availableProcessors() - 3)
 							break;
 						final int ti = t.getI();
 						final int xi = x.getI();
@@ -118,8 +118,8 @@ public class TilingProblem
 		else
 		{
 			int t = 15;
-			int x = 0;
-			int y = 4;
+			int x = 2;
+			int y = 2;
 			new TilingProblem().start(t, x, y);
 		}
 	}

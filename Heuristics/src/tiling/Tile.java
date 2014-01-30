@@ -21,6 +21,20 @@ public class Tile implements Comparable<Tile>
 		this(size, size);
 	}
 
+	public Tile(Tile t, boolean rotate)
+	{
+		this(t.width, t.height);
+		if (rotate)
+		{
+			int tmpW = this.getWidth();
+			int tmpH = this.getHeight();
+			this.setHeight(tmpW);
+			this.setWidth(tmpH);
+		}
+
+		this.color = t.color;
+	}
+
 	public int getHeight()
 	{
 		return this.height;
@@ -95,10 +109,15 @@ public class Tile implements Comparable<Tile>
 
 	public Tile rotate()
 	{
-		int tmpX = this.getWidth();
-		int tmpY = this.getHeight();
-		this.setWidth(tmpY);
-		this.setHeight(tmpX);
+		int tmpW = this.getWidth();
+		int tmpH = this.getHeight();
+		this.setHeight(tmpW);
+		this.setWidth(tmpH);
 		return this;
+	}
+
+	public boolean isSquare()
+	{
+		return this.width == this.height;
 	}
 }
