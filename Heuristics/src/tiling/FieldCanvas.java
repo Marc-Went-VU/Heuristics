@@ -76,6 +76,17 @@ public class FieldCanvas extends JPanel
 				}
 			}
 		}
+		g.setColor(new Color(0, 0, 0));
+		for (int i = 0; i < field.getWidth(); i++)
+		{
+			g.drawString(i + "", (i * scale) + FieldCanvas.MARGINLEFT, ((field.getHeight() + 1) * scale) + FieldCanvas.MARGINTOP);
+		}
+		for (int i = 0; i < field.getHeight(); i++)
+		{
+			g.drawString(i + "", ((field.getWidth() + 1) * scale) + FieldCanvas.MARGINLEFT - 15, ((i + 1) * scale)
+				+ FieldCanvas.MARGINTOP
+				- 7);
+		}
 	}
 
 	public void setField(Field f)

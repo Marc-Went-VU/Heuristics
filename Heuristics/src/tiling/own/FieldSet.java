@@ -65,21 +65,26 @@ public class FieldSet implements Comparable<FieldSet>
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
 		if (freeSpace == 0)
 			return score;
+
 		//score += (score / ((depth + 1.0)));
 
-		//		score += placedTile == null ? 0 : (placedTile.getTile().getArea()) / depth;
-		score += usableTiles == null ? 0 : (usableTiles.size() * (depth + 1.0));
-		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
+		score -= placedTile == null ? 0 : (placedTile.getTile().getArea() * 2) / depth;
+		//score += usableTiles == null ? 0 : (usableTiles.size() * (depth + 1.0));
+		//		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
 		if (from != null)
 		{
 			TileValue curr = getPlacedTile();
 			Coordinate currC = curr.getCoordinate();
-			Coordinate currCBott = new Coordinate(currC, 0, 1);
 
 			int maxWidth = getMaxWidth(currC);
 			int maxHeight = getMaxHeight(currC);
 			int preferredWidth = getPreferredWidth(currC, maxWidth);
 			int preferredHeight = getPreferredHeight(currC, maxHeight);
+
+			if (maxWidth - preferredWidth == 1 && !inField(new Coordinate(currC, maxWidth + 1, 0)))
+				preferredWidth = maxWidth;
+			if (maxHeight - preferredHeight == 1 && !inField(new Coordinate(currC, 0, maxHeight + 1)))
+				preferredHeight = maxHeight;
 
 			Tile t = curr.getTile();
 			if (t.getWidth() == preferredWidth && t.getHeight() == preferredHeight)
@@ -88,23 +93,25 @@ public class FieldSet implements Comparable<FieldSet>
 			{
 				int widthPenalty = Math.abs(preferredWidth - curr.getTile().getWidth());
 				int heightPenalty = Math.abs(preferredHeight - curr.getTile().getHeight());
+
+				boolean substractWidthPenalty = maxWidth == preferredWidth
+				/*|| !inField(new Coordinate(currC, 0, curr.getTile().getHeight()))*/;
+				boolean substractHeightPenalty = maxHeight == preferredHeight
+				/*|| !inField(new Coordinate(currC, curr.getTile().getWidth(), 0))*/;
 				if (t.getWidth() == preferredWidth)
-				{
-					if (maxWidth != 0 || !inField(new Coordinate(currC, curr.getTile().getWidth(), 0)))
-						score -= heightPenalty;
 					score /= 2;
-				}
 				else if (preferredWidth != Integer.MIN_VALUE)
 					score += widthPenalty;
 
 				if (t.getHeight() == preferredHeight)
-				{
-					if (maxHeight != 0 || !inField(currCBott))
-						score -= widthPenalty;
 					score /= 2;
-				}
 				else if (preferredHeight != Integer.MIN_VALUE)
 					score += heightPenalty;
+
+				if (substractWidthPenalty)
+					score -= widthPenalty;
+				if (substractHeightPenalty)
+					score -= heightPenalty;
 			}
 			if (from.score < 10)
 				score /= 10;
@@ -126,8 +133,12 @@ public class FieldSet implements Comparable<FieldSet>
 		}
 		if (left == null)
 			return maxHeight;
-		int preferredHeight = left.getHeight();
 
+		Coordinate topLeft = findTopCoordinate(left, currCLeft);
+
+		int preferredHeight = left.getHeight() - (currCLeft.getY() - topLeft.getY());
+		if (preferredHeight == 1)
+			preferredHeight += getPreferredHeight(new Coordinate(currCLeft, 0, 1), maxHeight);
 		return preferredHeight;
 	}
 
@@ -144,10 +155,47 @@ public class FieldSet implements Comparable<FieldSet>
 		}
 		if (above == null)
 			return maxWidth;
-		int preferredWidth = above.getWidth();
 
+		Coordinate topLeft = findTopCoordinate(above, currCAbove);
+
+		int preferredWidth = above.getWidth() - (currCAbove.getX() - topLeft.getX());
+		if (preferredWidth == 1)
+			preferredWidth += getPreferredWidth(new Coordinate(currCAbove, 1, 0), maxWidth);
 		return preferredWidth;
 
+	}
+
+	private Coordinate findTopCoordinate(Tile left, Coordinate c)
+	{
+		int k = 0;
+		int l = 0;
+		for (int i = c.getX(); i >= 0; i--)
+		{
+			List<Tile> tiles = this.field.getTiles(i, c.getY());
+			if (!tiles.isEmpty())
+			{
+				Tile t = tiles.get(0);
+				if (t != left)
+				{
+					k = i + 1;
+					break;
+				}
+			}
+		}
+		for (int j = c.getY(); j >= 0; j--)
+		{
+			List<Tile> tiles = this.field.getTiles(k, j);
+			if (!tiles.isEmpty())
+			{
+				Tile t = tiles.get(0);
+				if (t != left)
+				{
+					l = j + 1;
+					break;
+				}
+			}
+		}
+		return new Coordinate(k, l);
 	}
 
 	private int getMaxHeight(Coordinate c)
@@ -159,7 +207,6 @@ public class FieldSet implements Comparable<FieldSet>
 			if (this.from.getField().isOccupied(c.getX(), i))
 				break;
 		}
-		// TODO Auto-generated method stub
 		return max;
 	}
 
@@ -213,7 +260,16 @@ public class FieldSet implements Comparable<FieldSet>
 			{
 				usage = findUsable(usableTiles, tmpMaxWidth--);
 			}
-
+			if (usage.size() > 10)
+			{
+				List<Tile> tmp = new ArrayList<Tile>();
+				tmp = usage.subList(0, 10);
+				if (!tmp.isEmpty())
+				{
+					usage = new ArrayList<Tile>();
+					usage.addAll(tmp);
+				}
+			}
 			for (Tile u : usage)
 			{
 				Field f = new Field(this.field);
@@ -342,5 +398,11 @@ public class FieldSet implements Comparable<FieldSet>
 			//			return this.getPlacedTile().equals(fs.getPlacedTile());
 		}
 		return super.equals(o);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "(" + placedTile.toString() + " - " + this.getHScore() + ")";
 	}
 }

@@ -84,13 +84,13 @@ public class TilingProblem
 
 	public static void main(String[] args)
 	{
-		boolean multiple = true;
+		boolean multiple = false;
 		if (multiple)
 		{
 			int counter = 0;
 			for (final Int t = new Int(15); t.getI() <= 25; t.add(10))
 			{
-				for (final Int x = new Int(2); x.getI() <= 4; x.add(1))
+				for (final Int x = new Int(4); x.getI() <= 4; x.add(1))
 				{
 					for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
 					{
@@ -117,9 +117,9 @@ public class TilingProblem
 		}
 		else
 		{
-			int t = 15;
+			int t = 25;
 			int x = 0;
-			int y = 1;
+			int y = 4;
 			new TilingProblem().start(t, x, y);
 		}
 	}
