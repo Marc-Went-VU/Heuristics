@@ -12,15 +12,13 @@ public class Algorithm
 	public static final int DELAY = 1;
 	public static final boolean DEBUG = true;
 	private TilingFrame frame;
-	@SuppressWarnings("unused")
-	private Field currentField;
 	private final Field firstField;
 	private TileList list;
 
 	public Algorithm(TilingFrame frame, Field field, TileSet tiles)
 	{
 		this.frame = frame;
-		this.firstField = this.currentField = field;
+		this.firstField = field;
 		this.list = new TileList(tiles);
 	}
 
@@ -34,11 +32,13 @@ public class Algorithm
 			System.err.println("Algorithm didn't find solution :/");
 			return;
 		}
-		long endTime = System.nanoTime();
 
-		long duration = endTime - startTime;
-		double seconds = (double)duration / 1000000000.0;
-		System.out.println("It took " + seconds + " seconds");
+		if (DEBUG)
+		{
+			long duration = System.nanoTime() - startTime;
+			double seconds = (double)duration / 1000000000.0;
+			System.out.println("It took " + seconds + " seconds");
+		}
 		frame.setField(firstField);
 		for (TileValue ti : items)
 		{
@@ -58,23 +58,21 @@ public class Algorithm
 		PriorityQueue<FieldSet> openSet = new PriorityQueue<FieldSet>(1, new FieldSetComparator());
 
 		openSet.add(start);
-
+		double iterations = 0;
 		while (!openSet.isEmpty())
 		{
 			FieldSet fs = openSet.poll();
 			if (fs.getHScore() == 0)
 			{
+				if (DEBUG)
+					System.err.printf("It took: %.0f iterations to find the solutions\n", iterations);
 				return reconstructPath(fs);
 			}
 			closedSet.add(fs);
 			Field f = fs.getField();
-			if (DEBUG)
-			{
-				frame.setField(f);
-				frame.redraw(DELAY);
-			}
-			ArrayList<FieldSet> neighbors = fs.getNeighbours();
-			for (FieldSet neighbor : neighbors)
+			frame.setField(f);
+			frame.redraw(DELAY);
+			for (FieldSet neighbor : fs.getNeighbours())
 			{
 				if (closedSet.contains(neighbor))
 					continue;
@@ -89,7 +87,9 @@ public class Algorithm
 						openSet.add(neighbor);
 				}
 			}
+			iterations++;
 		}
+
 		return null;
 	}
 
