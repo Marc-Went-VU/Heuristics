@@ -124,8 +124,13 @@ public class FieldSet implements Comparable<FieldSet>
 			if (!tiles.isEmpty())
 				left = tiles.get(0);
 		}
-		//		int preferredHeight = left == null ? maxHeight : left.getHeight() > maxHeight ? maxHeight : left.getHeight();
-		int preferredHeight = left == null ? maxHeight : left.getHeight();
+		if (left == null)
+			return maxHeight;
+		int preferredHeight = left.getHeight();
+
+		if (preferredHeight > maxHeight)
+			preferredHeight = maxHeight;
+
 		return preferredHeight;
 	}
 
@@ -140,9 +145,13 @@ public class FieldSet implements Comparable<FieldSet>
 			if (!tiles.isEmpty())
 				above = tiles.get(0);
 		}
+		if (above == null)
+			return maxWidth;
+		int preferredWidth = above.getWidth();
 
-		//		int preferredWidth = above == null ? maxWidth : above.getWidth() > maxWidth ? maxWidth : above.getWidth();
-		int preferredWidth = above == null ? maxWidth : above.getWidth();
+		if (preferredWidth > maxWidth)
+			preferredWidth = maxWidth;
+
 		return preferredWidth;
 
 	}
