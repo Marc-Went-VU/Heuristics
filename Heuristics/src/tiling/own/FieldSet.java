@@ -78,8 +78,8 @@ public class FieldSet implements Comparable<FieldSet>
 
 			int maxWidth = getMaxWidth(currC);
 			int maxHeight = getMaxHeight(currC);
-			int preferredWidth = getPreferredWidth(currC, maxWidth);
-			int preferredHeight = getPreferredHeight(currC, maxHeight);
+			int preferredWidth = maxWidth;//getPreferredWidth(currC, maxWidth);
+			int preferredHeight = maxHeight; //getPreferredHeight(currC, maxHeight);
 
 			Tile t = curr.getTile();
 			if (t.getWidth() == preferredWidth && t.getHeight() == preferredHeight)
