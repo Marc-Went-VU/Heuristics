@@ -78,8 +78,8 @@ public class FieldSet implements Comparable<FieldSet>
 
 			int maxWidth = getMaxWidth(currC);
 			int maxHeight = getMaxHeight(currC);
-			int preferredWidth = getPreferredWidth(currC, maxWidth);
-			int preferredHeight = getPreferredHeight(currC, maxHeight);
+			int preferredWidth = getPreferredWidth(currC, maxWidth, curr.getTile().getWidth());
+			int preferredHeight = getPreferredHeight(currC, maxHeight, curr.getTile().getHeight());
 
 			if (maxWidth - preferredWidth == 1 && !inField(new Coordinate(currC, maxWidth + 1, 0)))
 				preferredWidth = maxWidth;
@@ -121,7 +121,7 @@ public class FieldSet implements Comparable<FieldSet>
 		return score;
 	}
 
-	private int getPreferredHeight(Coordinate currC, int maxHeight)
+	private int getPreferredHeight(Coordinate currC, int maxHeight, int tileHeight)
 	{
 		Coordinate currCLeft = new Coordinate(currC, -1, 0);
 		Tile left = null;
@@ -137,32 +137,53 @@ public class FieldSet implements Comparable<FieldSet>
 		Coordinate topLeft = findTopCoordinate(left, currCLeft);
 
 		int preferredHeight = left.getHeight() - (currCLeft.getY() - topLeft.getY());
-		if (preferredHeight == 1)
-			preferredHeight += getPreferredHeight(new Coordinate(currCLeft, 0, 1), maxHeight);
+		if (preferredHeight < tileHeight)
+		{
+			Coordinate currCLeftAdjecent = new Coordinate(currCLeft);
+			while (getTileAt(currCLeftAdjecent) == left)
+				currCLeftAdjecent = new Coordinate(currCLeftAdjecent, 1, 0);
+
+			preferredHeight += getPreferredWidth(currCLeftAdjecent, maxHeight, tileHeight);
+		}
 		return preferredHeight;
 	}
 
-	private int getPreferredWidth(Coordinate currC, int maxWidth)
+	private int getPreferredWidth(Coordinate currC, int maxWidth, int tileWidth)
 	{
 		Coordinate currCAbove = new Coordinate(currC, 0, -1);
 
-		Tile above = null;
-		if (inField(currCAbove))
-		{
-			List<Tile> tiles = this.field.getTiles(currCAbove.getX(), currCAbove.getY());
-			if (!tiles.isEmpty())
-				above = tiles.get(0);
-		}
+		Tile above = getTileAt(currCAbove);
+
 		if (above == null)
 			return maxWidth;
 
 		Coordinate topLeft = findTopCoordinate(above, currCAbove);
 
 		int preferredWidth = above.getWidth() - (currCAbove.getX() - topLeft.getX());
-		if (preferredWidth == 1)
-			preferredWidth += getPreferredWidth(new Coordinate(currCAbove, 1, 0), maxWidth);
+
+		if (preferredWidth < tileWidth)
+		{
+			Coordinate currCAboveAdjecent = new Coordinate(currCAbove);
+			while (getTileAt(currCAboveAdjecent) == above)
+				currCAboveAdjecent = new Coordinate(currCAboveAdjecent, 1, 0);
+
+			preferredWidth += getPreferredWidth(currCAboveAdjecent, maxWidth, tileWidth);
+		}
+
 		return preferredWidth;
 
+	}
+
+	private Tile getTileAt(Coordinate c)
+	{
+		Tile t = null;
+		if (inField(c))
+		{
+			List<Tile> tiles = this.field.getTiles(c.getX(), c.getY());
+			if (!tiles.isEmpty())
+				t = tiles.get(0);
+		}
+		return t;
 	}
 
 	private Coordinate findTopCoordinate(Tile left, Coordinate c)
