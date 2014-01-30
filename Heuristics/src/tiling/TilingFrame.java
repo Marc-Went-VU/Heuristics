@@ -15,11 +15,12 @@ public class TilingFrame extends JFrame
 	private static final long serialVersionUID = -360885512080963508L;
 	private FieldCanvas fieldCanvas;
 
-	public TilingFrame(Field field, int scale)
+	public TilingFrame(Field field, int scale, String problemSet)
 	{
 		fieldCanvas = new FieldCanvas(field, scale);
 		// frame settings:
-		setTitle("Heuristics 2013 - Tegelzetten");
+		//		setTitle("Heuristics 2013 - Tegelzetten");
+		setTitle(problemSet);
 		setLayout(new BorderLayout());
 		add(this.fieldCanvas, BorderLayout.CENTER);
 

@@ -133,7 +133,7 @@ public class TilingAssignmentGenerator
 		field = new Field(sizeX, sizeY);
 		if (gui)
 		{
-			frame = new TilingFrame(field, assignment.getScale());
+			frame = new TilingFrame(field, assignment.getScale(), "");
 		}
 
 		//		System.out.printf("Creating tileset of initially: %d tiles on a canvas of %d x %d\n", numTiles,sizeX,sizeY);

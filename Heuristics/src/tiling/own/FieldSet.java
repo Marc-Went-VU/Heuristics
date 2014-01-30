@@ -65,8 +65,10 @@ public class FieldSet implements Comparable<FieldSet>
 		score = freeSpace = (from == null ? field.freeSpace() : from.getFreeSpace() - placedTile.getTile().getArea());
 		if (freeSpace == 0)
 			return score;
-		score += (score / ((depth + 1.0)));
+		//score += (score / ((depth + 1.0)));
+
 		//		score += placedTile == null ? 0 : (placedTile.getTile().getArea()) / depth;
+		score += usableTiles == null ? 0 : (usableTiles.size() * (depth + 1.0));
 		score += placedTile == null ? 0 : placedTile.getCoordinate().getY();
 		if (from != null)
 		{
@@ -121,6 +123,8 @@ public class FieldSet implements Comparable<FieldSet>
 				else if (preferredHeight != Integer.MIN_VALUE)
 					score += heightPenalty;
 			}
+			if (from.score < 10)
+				score /= 10;
 			if (score <= 0)
 				score = 1;
 		}
@@ -177,12 +181,14 @@ public class FieldSet implements Comparable<FieldSet>
 
 		for (Coordinate pC : placableCoordinates)
 		{
+			if (pC.equals(new Coordinate(6, 21)))
+				System.out.println("blah");
 			int maxWidth = 0;
 			for (int i = pC.getX(); i < field.getWidth(); i++)
 			{
-				maxWidth++;
 				if (field.isOccupied(i, pC.getY()))
 					break;
+				maxWidth++;
 			}
 			ArrayList<Tile> usage = null;
 			int tmpMaxWidth = maxWidth;
@@ -190,28 +196,28 @@ public class FieldSet implements Comparable<FieldSet>
 			{
 				usage = findUsable(usableTiles, tmpMaxWidth--);
 			}
-			ArrayList<Tile> nonUsable = new ArrayList<Tile>();
-			nonUsable.addAll(usableTiles);
-			nonUsable.removeAll(usage);
-			for (Tile u : usage)
-			{
-				Field f = new Field(this.field);
-				TileValue tileItem = new TileValue(u, pC);
-				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
-				{
-					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
-					neighbors.add(fs);
-				}
-				//				else
-				//					nonUsable.add(new Tile(u, true));
-			}
+			//			ArrayList<Tile> nonUsable = new ArrayList<Tile>();
+			//			nonUsable.addAll(usableTiles);
+			//			nonUsable.removeAll(usage);
+			//			for (Tile u : usage)
+			//			{
+			//				Field f = new Field(this.field);
+			//				TileValue tileItem = new TileValue(u, pC);
+			//				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+			//				{
+			//					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
+			//					neighbors.add(fs);
+			//				}
+			//				//				else
+			//				//					nonUsable.add(new Tile(u, true));
+			//			}
 
-			usage = null;
-			tmpMaxWidth = maxWidth;
-			while (usage == null && tmpMaxWidth > 0)
-			{
-				usage = findUsable(nonUsable, tmpMaxWidth--);
-			}
+			//			usage = null;
+			//			tmpMaxWidth = maxWidth;
+			//			while (usage == null && tmpMaxWidth > 0)
+			//			{
+			//				usage = findUsable(nonUsable, tmpMaxWidth--);
+			//			}
 
 			for (Tile u : usage)
 			{

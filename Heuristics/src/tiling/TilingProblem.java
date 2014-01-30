@@ -19,10 +19,10 @@ public class TilingProblem
 	}
 
 	// Initialises the field and graphical display
-	public void init(int fieldWidth, int fieldHeight, int scale)
+	public void init(int fieldWidth, int fieldHeight, int scale, String problemSet)
 	{
 		field = new Field(fieldWidth, fieldHeight);
-		frame = new TilingFrame(this.field, scale);
+		frame = new TilingFrame(this.field, scale, problemSet);
 	}
 
 	public void start()
@@ -42,7 +42,7 @@ public class TilingProblem
 			System.out.printf("Number of tiles in the set:               %d \n", assignment.getTiles().size());
 			System.out.printf("Number of differently sized tiles in set: %d \n", assignment.getTiles().getNumberOfTileSizes());
 
-			init(assignment.getWidth(), assignment.getHeight(), assignment.getScale());
+			init(assignment.getWidth(), assignment.getHeight(), assignment.getScale(), PROBLEM);
 
 			Algorithm a = new Algorithm(frame, field, assignment.getTiles());
 			a.runAlgorithm();//
@@ -70,7 +70,7 @@ public class TilingProblem
 			System.out.printf("Number of tiles in the set:               %d \n", assignment.getTiles().size());
 			System.out.printf("Number of differently sized tiles in set: %d \n", assignment.getTiles().getNumberOfTileSizes());
 
-			init(assignment.getWidth(), assignment.getHeight(), assignment.getScale());
+			init(assignment.getWidth(), assignment.getHeight(), assignment.getScale(), tile + "-" + x + "-" + y);
 
 			Algorithm a = new Algorithm(frame, field, assignment.getTiles());
 			a.runAlgorithm();//
@@ -88,7 +88,7 @@ public class TilingProblem
 		if (multiple)
 		{
 			int counter = 0;
-			for (final Int t = new Int(15); t.getI() <= 24; t.add(10))
+			for (final Int t = new Int(15); t.getI() <= 25; t.add(10))
 			{
 				for (final Int x = new Int(1); x.getI() <= 4; x.add(1))
 				{
@@ -118,8 +118,8 @@ public class TilingProblem
 		else
 		{
 			int t = 15;
-			int x = 2;
-			int y = 2;
+			int x = 0;
+			int y = 1;
 			new TilingProblem().start(t, x, y);
 		}
 	}
