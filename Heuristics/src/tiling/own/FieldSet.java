@@ -78,8 +78,8 @@ public class FieldSet implements Comparable<FieldSet>
 
 			int maxWidth = getMaxWidth(currC);
 			int maxHeight = getMaxHeight(currC);
-			int preferredWidth = maxWidth;//getPreferredWidth(currC, maxWidth);
-			int preferredHeight = maxHeight; //getPreferredHeight(currC, maxHeight);
+			int preferredWidth = getPreferredWidth(currC, maxWidth);
+			int preferredHeight = getPreferredHeight(currC, maxHeight);
 
 			Tile t = curr.getTile();
 			if (t.getWidth() == preferredWidth && t.getHeight() == preferredHeight)
@@ -128,9 +128,6 @@ public class FieldSet implements Comparable<FieldSet>
 			return maxHeight;
 		int preferredHeight = left.getHeight();
 
-		if (preferredHeight > maxHeight)
-			preferredHeight = maxHeight;
-
 		return preferredHeight;
 	}
 
@@ -148,9 +145,6 @@ public class FieldSet implements Comparable<FieldSet>
 		if (above == null)
 			return maxWidth;
 		int preferredWidth = above.getWidth();
-
-		if (preferredWidth > maxWidth)
-			preferredWidth = maxWidth;
 
 		return preferredWidth;
 
@@ -206,6 +200,8 @@ public class FieldSet implements Comparable<FieldSet>
 
 		for (Coordinate pC : placableCoordinates)
 		{
+			if (pC.equals(new Coordinate(6, 21)))
+				System.out.println("blah");
 			int maxWidth = 0;
 			for (int i = pC.getX(); i < field.getWidth(); i++)
 			{
@@ -219,6 +215,28 @@ public class FieldSet implements Comparable<FieldSet>
 			{
 				usage = findUsable(usableTiles, tmpMaxWidth--);
 			}
+			//			ArrayList<Tile> nonUsable = new ArrayList<Tile>();
+			//			nonUsable.addAll(usableTiles);
+			//			nonUsable.removeAll(usage);
+			//			for (Tile u : usage)
+			//			{
+			//				Field f = new Field(this.field);
+			//				TileValue tileItem = new TileValue(u, pC);
+			//				if (f.placeTileSecure(tileItem.getTile(), tileItem.getCoordinate().getX(), tileItem.getCoordinate().getY()))
+			//				{
+			//					FieldSet fs = new FieldSet(this, f, tileItem, usableTiles, this.depth + 1);
+			//					neighbors.add(fs);
+			//				}
+			//				//				else
+			//				//					nonUsable.add(new Tile(u, true));
+			//			}
+
+			//			usage = null;
+			//			tmpMaxWidth = maxWidth;
+			//			while (usage == null && tmpMaxWidth > 0)
+			//			{
+			//				usage = findUsable(nonUsable, tmpMaxWidth--);
+			//			}
 
 			for (Tile u : usage)
 			{

@@ -118,8 +118,8 @@ public class TilingProblem
 		else
 		{
 			int t = 15;
-			int x = 2;
-			int y = 0;
+			int x = 0;
+			int y = 1;
 			new TilingProblem().start(t, x, y);
 		}
 	}
