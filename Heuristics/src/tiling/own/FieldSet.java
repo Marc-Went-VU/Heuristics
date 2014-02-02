@@ -49,16 +49,6 @@ public class FieldSet implements Comparable<FieldSet>
 			while (usage == null && tmpMaxWidth > 0)
 				usage = findUsable(usableTiles, tmpMaxWidth--);
 
-			if (usage.size() > 10)
-			{
-				List<Tile> tmp = new ArrayList<Tile>();
-				tmp = usage.subList(0, 10);
-				if (!tmp.isEmpty())
-				{
-					usage = new ArrayList<Tile>();
-					usage.addAll(tmp);
-				}
-			}
 			for (Tile u : usage)
 			{
 				Field f = new Field(this.field);
@@ -85,7 +75,7 @@ public class FieldSet implements Comparable<FieldSet>
 				}
 			}
 		}
-
+		neighbors.trimToSize();
 		return neighbors;
 	}
 
@@ -163,6 +153,7 @@ public class FieldSet implements Comparable<FieldSet>
 
 			}
 		}
+		usable.trimToSize();
 		return usable;
 	}
 
@@ -245,7 +236,7 @@ public class FieldSet implements Comparable<FieldSet>
 
 	private ArrayList<Tile> findUsable(ArrayList<Tile> usableTiles, int maxWidth)
 	{
-		ArrayList<Tile> tiles = new ArrayList<Tile>();
+		ArrayList<Tile> tiles = new ArrayList<Tile>(10);
 		for (Tile t : usableTiles)
 		{
 			if (t.getWidth() <= maxWidth)
@@ -257,7 +248,10 @@ public class FieldSet implements Comparable<FieldSet>
 				else
 					tiles.add(new Tile(t, true));
 			}
+			if (tiles.size() >= 10)
+				break;
 		}
+		tiles.trimToSize();
 		return tiles;
 	}
 
@@ -323,6 +317,7 @@ public class FieldSet implements Comparable<FieldSet>
 				}
 			}
 		}
+		ac.trimToSize();
 		return ac;
 	}
 

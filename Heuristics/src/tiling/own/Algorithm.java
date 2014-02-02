@@ -100,6 +100,7 @@ public class Algorithm
 		ArrayList<TileValue> path = new ArrayList<TileValue>();
 		path.add(current.getPlacedTile());
 		path.addAll(reconstructPath(current.getFrom()));
+		path.trimToSize();
 		return path;
 	}
 

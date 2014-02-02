@@ -93,7 +93,26 @@ public class Tile implements Comparable<Tile>
 	@Override
 	public int compareTo(Tile o)
 	{
-		return this.getArea() - o.getArea();
+		if (this.getArea() < o.getArea())
+			return -1;
+		else if (this.getArea() > o.getArea())
+			return 1;
+		else
+		{
+			int pythThis = pyth(this.getWidth(), this.getHeight());
+			int pythO = pyth(o.getWidth(), o.getHeight());
+			if (pythThis > pythO)
+				return -1;
+			else if (pythThis < pythO)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	private int pyth(int width, int height)
+	{
+		return (width * width) + (height * height);
 	}
 
 	@Override

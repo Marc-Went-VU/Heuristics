@@ -80,15 +80,15 @@ public class TilingProblem
 		else
 		{
 			boolean multiple = false;
-			boolean thread = true;
+			boolean thread = false;
 			if (multiple)
 			{
 				int counter = 0;
-				for (final Int t = new Int(45); t.getI() <= 55; t.add(10))
+				for (final Int t = new Int(35); t.getI() <= 55; t.add(10))
 				{
 					for (final Int x = new Int(0); x.getI() <= 4; x.add(1))
 					{
-						for (final Int y = new Int(0); y.getI() <= 4; y.add(1))
+						for (final Int y = new Int(2); y.getI() <= 4; y.add(1))
 						{
 							System.out.printf("Starting t: %d, x: %d, y: %d\n", t.getI(), x.getI(), y.getI());
 							if (counter >= Runtime.getRuntime().availableProcessors() - 3)
@@ -119,9 +119,9 @@ public class TilingProblem
 			}
 			else
 			{
-				int t = 55;
+				int t = 35;
 				int x = 0;
-				int y = 0;
+				int y = 3;
 				new TilingProblem().start(t, x, y);
 			}
 		}
